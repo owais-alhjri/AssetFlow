@@ -3,8 +3,10 @@
     "",
     "\\AssetFlow-backend",
     "\\AssetFlow-backend\\src",
-    "\\AssetFlow-backend\\src\\AssetFlow.API"
+    "\\AssetFlow-backend\\src\\AssetFlow.Domain",
+    "\\AssetFlow-backend\\src\\AssetFlow.Domain\\Entities",
+    "\\AssetFlow-backend\\src\\AssetFlow.Domain\\Errors",
+    "\\AssetFlow-backend\\src\\AssetFlow.Domain\\ValueObjects"
   ],
-  "SelectedNode": "\\AssetFlow-backend\\.gitignore",
   "PreviewInSolutionExplorer": false
 }
