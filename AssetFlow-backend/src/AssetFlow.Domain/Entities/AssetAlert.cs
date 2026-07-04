@@ -25,7 +25,7 @@ public class AssetAlert
         Id = Guid.NewGuid();
         AssetId = assetId;
         Type = type;
-        Status = AlertStatus.Active;
+        Status = AlertStatus.Pending;
         TriggerDate = triggerDate;
         Message = message;
         CreatedAt = DateTime.UtcNow;
@@ -41,8 +41,8 @@ public class AssetAlert
 
     public Result Acknowledge(Guid acknowledgedByUserId)
     {
-        if (Status == AlertStatus.Acknowledged)
-            return AssetAlertErrors.AlreadyAcknowledged;
+        if (Status != AlertStatus.Pending)
+            return AssetAlertErrors.CannotAcknowledgeFromCurrentStatus;
 
         Status = AlertStatus.Acknowledged;
         AcknowledgedAt = DateTime.UtcNow;
@@ -50,5 +50,24 @@ public class AssetAlert
 
         return Result.Success();
     }
-}
 
+    public Result Resolve()
+    {
+        if (Status is AlertStatus.Resolved or AlertStatus.Dismissed)
+            return AssetAlertErrors.AlreadyClosed;
+
+        Status = AlertStatus.Resolved;
+
+        return Result.Success();
+    }
+
+    public Result Dismiss()
+    {
+        if (Status is AlertStatus.Resolved or AlertStatus.Dismissed)
+            return AssetAlertErrors.AlreadyClosed;
+
+        Status = AlertStatus.Dismissed;
+
+        return Result.Success();
+    }
+}
