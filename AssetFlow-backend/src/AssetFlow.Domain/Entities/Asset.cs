@@ -8,16 +8,16 @@ namespace AssetFlow.Domain.Entities;
 public class Asset
 {
     public Guid Id { get; private set; }
-    public AssetTag Tag { get; private set; }
-    public string Name { get; private set; }
-    public SerialNumber SerialNumber { get; private set; }
+    public AssetTag Tag { get; private set; } = null!;
+    public string Name { get; private set; } = null!;
+    public SerialNumber SerialNumber { get; private set; } = null!;
     public Guid CategoryId { get; private set; }
     public Category Category { get; private set; } = null!;
     public Guid StatusId { get; private set; }
     public AssetStatus Status { get; private set; } = null!;
     public AssetCondition Condition { get; private set; }
     public DateOnly PurchaseDate { get; private set; }
-    public Money PurchasePrice { get; private set; }
+    public Money PurchasePrice { get; private set; } = null!;
     public DateOnly? WarrantyExpiryDate { get; private set; }
     public DateOnly? NextMaintenanceDate { get; private set; }
     public string? Location { get; private set; }

@@ -15,4 +15,10 @@ public static class AssetErrors
 
     public static readonly Error CannotAssignUnavailableAsset =
         new("Asset.CannotAssignUnavailableAsset", "Asset is not available for assignment.");
+
+    public static Error DuplicateTag(string tag) =>
+        new("Asset.DuplicateTag", $"An asset with tag '{tag}' already exist.");
+
+    public static readonly Error DefaultStatusMissing =
+        new("Asset.DefaultStatusMissing", "The default 'Available' status was not found.");
 }
