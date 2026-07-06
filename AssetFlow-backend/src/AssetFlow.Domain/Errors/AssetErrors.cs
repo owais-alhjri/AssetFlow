@@ -18,7 +18,11 @@ public static class AssetErrors
 
     public static Error DuplicateTag(string tag) =>
         new("Asset.DuplicateTag", $"An asset with tag '{tag}' already exist.");
+    public static Error NotFound(Guid id) =>
+        new("Asset.NotFound", $"No asset was found with ID '{id}'.");
 
     public static readonly Error DefaultStatusMissing =
         new("Asset.DefaultStatusMissing", "The default 'Available' status was not found.");
+
+
 }

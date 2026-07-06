@@ -4,7 +4,6 @@ using AssetFlow.Domain.Enums;
 using MediatR;
 
 namespace AssetFlow.Application.Assets.Commands.CreateAsset;
-
 public record CreateAssetCommand(
     string Tag,
     string Name,
@@ -19,5 +18,3 @@ public record CreateAssetCommand(
     string? Location,
     string? Notes
 ) : IRequest<Result<AssetDto>>;
-
-

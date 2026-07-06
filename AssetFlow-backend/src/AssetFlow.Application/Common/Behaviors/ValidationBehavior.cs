@@ -3,31 +3,24 @@ using MediatR;
 
 namespace AssetFlow.Application.Common.Behaviors;
 
-public class ValidationBehavior<TRequest, TResponse>
+public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
 {
-    private readonly IEnumerable<IValidator<TRequest>> _validators;
-
-    public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
-    {
-        _validators = validators;
-    }
-
     public async Task<TResponse> Handle(
         TRequest request,
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
         // No validator registered for this request? Skip straight to the handler.
-        if (!_validators.Any())
+        if (!validators.Any())
             return await next();
 
         var context = new ValidationContext<TRequest>(request);
 
         // Run every validator for this request type (usually one) in parallel.
         var results = await Task.WhenAll(
-            _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+            validators.Select(v => v.ValidateAsync(context, cancellationToken)));
 
         // Flatten all failures from all validators into one list.
         var failures = results
