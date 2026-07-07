@@ -116,4 +116,10 @@ public class Asset
             return AssetErrors.NameTooLong;
         return Result.Success();
     }
+
+    public void Delete()
+    {
+        IsDeleted = true;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }
