@@ -77,15 +77,43 @@ public class Asset
         string? location,
         string? notes)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            return AssetErrors.NameEmpty;
-
-        if (name.Length > 200)
-            return AssetErrors.NameTooLong;
+        var nameResult = ValidateName(name);
+        if (!nameResult.IsSuccess)
+            return nameResult.Error!;
 
         return new Asset(
             tag, name.Trim(), serialNumber, categoryId, statusId, condition,
             purchaseDate, purchasePrice, warrantyExpiryDate, nextMaintenanceDate,
             location?.Trim(), notes?.Trim());
+    }
+
+    public Result Update(
+        string name,
+        AssetCondition condition,
+        DateOnly? warrantyExpiryDate,
+        DateOnly? nextMaintenanceDate,
+        string? location,
+        string? notes)
+    {
+        var nameResult = ValidateName(name);
+        if (!nameResult.IsSuccess)
+            return nameResult.Error!;
+        Name = name;
+        Condition = condition;
+        WarrantyExpiryDate = warrantyExpiryDate;
+        NextMaintenanceDate = nextMaintenanceDate;
+        Location = location;
+        Notes = notes;
+        UpdatedAt = DateTime.UtcNow;
+        return Result.Success();
+    }
+
+    private static Result ValidateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return AssetErrors.NameEmpty;
+        if (name.Length > 200)
+            return AssetErrors.NameTooLong;
+        return Result.Success();
     }
 }

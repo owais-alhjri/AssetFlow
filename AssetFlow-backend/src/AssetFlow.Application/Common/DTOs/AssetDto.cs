@@ -1,4 +1,6 @@
-﻿namespace AssetFlow.Application.Common.DTOs;
+﻿using AssetFlow.Domain.Entities;
+
+namespace AssetFlow.Application.Common.DTOs;
 
 public class AssetDto
 {
@@ -17,4 +19,25 @@ public class AssetDto
     public string? Location { get; init; }
     public string? Notes { get; init; }
     public DateTime CreatedAt { get; init; }
+    public DateTime? UpdatedAt { get; init; }
+
+    public static AssetDto FromEntity(Asset asset) => new()
+    {
+        Id = asset.Id,
+        Tag = asset.Tag.Value,
+        Name = asset.Name,
+        SerialNumber = asset.SerialNumber.Value,
+        CategoryId = asset.CategoryId,
+        StatusId = asset.StatusId,
+        Condition = asset.Condition.ToString(),
+        PurchaseDate = asset.PurchaseDate,
+        PurchasePrice = asset.PurchasePrice.Amount,
+        Currency = asset.PurchasePrice.Currency,
+        WarrantyExpiryDate = asset.WarrantyExpiryDate,
+        NextMaintenanceDate = asset.NextMaintenanceDate,
+        Location = asset.Location,
+        Notes = asset.Notes,
+        CreatedAt = asset.CreatedAt,
+        UpdatedAt = asset.UpdatedAt
+    };
 }

@@ -21,25 +21,7 @@ public class GetAssetsQueryHandler(IAssetRepository assetRepository)
             request.CategoryId,
             cancellationToken);
 
-        var items = assets.Select(asset => new AssetDto
-        {
-            Id = asset.Id,
-            Tag = asset.Tag.Value,
-            Name = asset.Name,
-            SerialNumber = asset.SerialNumber.Value,
-            CategoryId = asset.CategoryId,
-            StatusId = asset.StatusId,
-            Condition = asset.Condition.ToString(),
-            PurchaseDate = asset.PurchaseDate,
-            PurchasePrice = asset.PurchasePrice.Amount,
-            Currency = asset.PurchasePrice.Currency,
-            WarrantyExpiryDate = asset.WarrantyExpiryDate,
-            NextMaintenanceDate = asset.NextMaintenanceDate,
-            Location = asset.Location,
-            Notes = asset.Notes,
-            CreatedAt = asset.CreatedAt
-        }).ToList();
-
+        var items = assets.Select(AssetDto.FromEntity).ToList();
         return new PagedResult<AssetDto>
         {
             Items = items,
