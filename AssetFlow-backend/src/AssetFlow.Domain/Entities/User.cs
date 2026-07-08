@@ -32,7 +32,8 @@ public class User
         UpdatedAt = null;
     }
 
-    public static Result<User> Create(EmailAddress email, PasswordHash passwordHash, Guid roleId, Guid? employeeId)
+    public static Result<User> Create(EmailAddress email, PasswordHash passwordHash,
+        Guid roleId, Guid? employeeId)
     {
         return new User(email, passwordHash, roleId, employeeId);
     }

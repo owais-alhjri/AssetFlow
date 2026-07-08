@@ -10,5 +10,8 @@ public static class UserRoleErrors
         new("UserRole.NameTooLong", "User role name cannot exceed 50 characters.");
     public static readonly Error AlreadyInactive =
         new("UserRole.AlreadyInactive", "User role is already inactive.");
+
+    public static readonly Error DefaultRoleMissing =
+        new("UserRole.DefaultRoleMissing", "Default Role is Missing");
 }
 
