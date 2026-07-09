@@ -12,9 +12,10 @@
     <ProjectReference Include="..\AssetFlow.Domain\AssetFlow.Domain.csproj" />
     <ProjectReference Include="..\AssetFlow.Application\AssetFlow.Application.csproj" />
   </ItemGroup>
-
   <ItemGroup>
-    <Folder Include="Data\Seeding\SeedData\" />
+    <Content Include="Data\Seeding\SeedData\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <PropertyGroup>
