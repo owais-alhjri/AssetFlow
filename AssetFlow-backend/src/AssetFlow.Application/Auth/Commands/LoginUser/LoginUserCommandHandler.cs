@@ -26,9 +26,10 @@ public class LoginUserCommandHandler(
         if (!passwordVerify)
             return UserErrors.InvalidCredentials;
 
-        var token = jwtTokenGenerator.GenerateToken(user);
+        var roleName = user.Role.Name;
+        var token = jwtTokenGenerator.GenerateToken(user, roleName);
 
 
-        return AuthResponseDto.FromEntity(user, token, user.Role.Name);
+        return AuthResponseDto.FromEntity(user, token, roleName);
     }
 }

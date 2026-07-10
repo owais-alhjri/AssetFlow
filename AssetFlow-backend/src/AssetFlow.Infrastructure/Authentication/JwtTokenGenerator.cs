@@ -12,13 +12,13 @@ namespace AssetFlow.Infrastructure.Authentication;
 public class JwtTokenGenerator(IOptions<JwtSettings> jwtOptions) : IJwtTokenGenerator
 {
     private readonly JwtSettings _settings = jwtOptions.Value;
-    public string GenerateToken(User user)
+    public string GenerateToken(User user, string roleName)
     {
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email.Value),
-            new(ClaimTypes.Role, user.Role.Name),
+            new(ClaimTypes.Role, roleName),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

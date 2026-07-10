@@ -51,7 +51,7 @@ public class RegisterUserCommandHandler(
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         // 6. Token + response.
-        var token = jwtTokenGenerator.GenerateToken(user);
+        var token = jwtTokenGenerator.GenerateToken(user, "Employee");
         return AuthResponseDto.FromEntity(user, token, "Employee");
     }
 }
