@@ -25,13 +25,17 @@ public class Category
 
     public static Result<Category> Create(string name, string? description)
     {
-        ValidateName(name);
+        var nameResult = ValidateName(name);
+        if (!nameResult.IsSuccess)
+            return nameResult.Error!;
         return new Category(name.Trim(), description?.Trim());
     }
 
     public  Result Update(string name, string? description)
     {
-        ValidateName(name);
+        var nameResult = ValidateName(name);
+        if (!nameResult.IsSuccess)
+            return nameResult.Error!;
         Name = name.Trim();
         Description = description?.Trim();
         UpdatedAt = DateTime.UtcNow;
