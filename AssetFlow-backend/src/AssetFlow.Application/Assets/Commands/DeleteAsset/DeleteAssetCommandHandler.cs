@@ -7,7 +7,7 @@ namespace AssetFlow.Application.Assets.Commands.DeleteAsset;
 
 public class DeleteAssetCommandHandler(
     IAssetRepository assetRepository,
-    IAssetStatusRepository assetStatusRepository,
+    IAssignmentRepository assignmentRepository ,
     IUnitOfWork unitOfWork
     ): IRequestHandler<DeleteAssetCommand, Result>
 {
@@ -19,10 +19,11 @@ public class DeleteAssetCommandHandler(
         var asset = await assetRepository.GetByIdAsync(request.Id, cancellationToken);
         if (asset is null)
             return AssetErrors.NotFound(request.Id);
-        var assignedStatusId = await assetStatusRepository.GetIdByNameAsync("Assigned", cancellationToken);
-        if (asset.StatusId == assignedStatusId)
+
+        var active = await assignmentRepository.GetActiveByAssetIdAsync(request.Id, cancellationToken);
+        if (active is not null)
             return AssetErrors.CannotDeleteAssigned;
-        
+
 
         asset.Delete();
         await unitOfWork.SaveChangesAsync(cancellationToken);

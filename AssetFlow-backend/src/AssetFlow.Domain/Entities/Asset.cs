@@ -122,4 +122,18 @@ public class Asset
         IsDeleted = true;
         UpdatedAt = DateTime.UtcNow;
     }
+
+    public Result Assign(Guid assignedStatusId)
+    {
+        StatusId = assignedStatusId;
+        UpdatedAt = DateTime.UtcNow;
+        return Result.Success();
+    }
+
+    public Result Return(Guid availableStatusId)
+    {
+        StatusId = availableStatusId;
+        UpdatedAt = DateTime.UtcNow;
+        return Result.Success();
+    }
 }

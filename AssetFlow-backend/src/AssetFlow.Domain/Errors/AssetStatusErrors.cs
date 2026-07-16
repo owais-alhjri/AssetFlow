@@ -10,4 +10,6 @@ public static class AssetStatusErrors
         new("AssetStatus.NameTooLong", "Asset status name cannot exceed 50 characters.");
     public static readonly Error AlreadyInactive =
         new("AssetStatus.AlreadyInactive", "Asset status is already inactive.");
+    public static Error NotFoundByName(string name) =>
+        new("AssetStatus.NotFoundByName", $"No asset status named '{name}' was found.");
 }
