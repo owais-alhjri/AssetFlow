@@ -5,15 +5,15 @@ namespace AssetFlow.Application.Common.DTOs;
 public class AssetDto
 {
     public Guid Id { get; init; }
-    public string Tag { get; init; } = default!;
-    public string Name { get; init; } = default!;
-    public string SerialNumber { get; init; } = default!;
+    public required string Tag { get; init; } 
+    public required string Name { get; init; } 
+    public required string SerialNumber { get; init; } 
     public Guid CategoryId { get; init; }
     public Guid StatusId { get; init; }
-    public string Condition { get; init; } = default!;
+    public required string Condition { get; init; } 
     public DateOnly PurchaseDate { get; init; }
     public decimal PurchasePrice { get; init; }
-    public string Currency { get; init; } = default!;
+    public required string Currency { get; init; } 
     public DateOnly? WarrantyExpiryDate { get; init; }
     public DateOnly? NextMaintenanceDate { get; init; }
     public string? Location { get; init; }

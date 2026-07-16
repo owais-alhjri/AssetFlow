@@ -25,4 +25,9 @@ public static class EmployeeErrors
         new("Employee.DepartmentTooLong", "Department cannot exceed 50 characters.");
     public static readonly Error AlreadyInactive =
         new("Employee.AlreadyInactive", "Employee is already inactive.");
+    
+    public static Error NotFound(Guid id) =>
+        new ("Employee.NotFound", $"Employee not found with this id: '{id}'.");
+    public static Error DuplicateEmployeeNumber(string number) =>
+        new("Employee.DuplicateEmployeeNumber", $"Duplicated Employee Number: '{number}'");
 }

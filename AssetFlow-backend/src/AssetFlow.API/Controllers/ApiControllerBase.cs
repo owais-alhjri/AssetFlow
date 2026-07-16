@@ -10,8 +10,8 @@ namespace AssetFlow.API.Controllers
     {
         protected IActionResult Problem(Error error) => error.Code switch
         {
-            var c when c.EndsWith("NotFound")      => NotFound(ToProblem(error)),
-            var c when c.EndsWith("Duplicate")     => Conflict(ToProblem(error)),
+            var c when c.Contains("NotFound")      => NotFound(ToProblem(error)),
+            var c when c.Contains("Duplicate")     => Conflict(ToProblem(error)),
             var c when c.Contains("AlreadyExists") => Conflict(ToProblem(error)),
             _                                            => BadRequest(ToProblem(error))
         };
