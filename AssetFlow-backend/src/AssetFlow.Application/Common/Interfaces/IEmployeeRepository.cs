@@ -8,4 +8,5 @@ public interface IEmployeeRepository
     Task<Employee?> GetByIdAsync(Guid id, CancellationToken ct);
     Task AddAsync(Employee employee, CancellationToken ct);
     Task<bool> ExistsByEmployeeNumberAsync(string employeeNumber, CancellationToken ct);
+    Task<bool> ExistsByIdAsync(Guid id, CancellationToken cancellationToken);
 }

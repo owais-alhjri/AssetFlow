@@ -12,4 +12,7 @@ public static class UserErrors
 
     public static readonly Error EmailAlreadyExists =
         new("User.EmailAlreadyExists", "A user with this email already exists.");
+
+    public static readonly Error EmployeeAlreadyLinked =
+        new("User.EmployeeAlreadyLinked", "This employee is already linked to a user account.");
 }

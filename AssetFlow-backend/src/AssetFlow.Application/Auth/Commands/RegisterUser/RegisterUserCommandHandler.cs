@@ -13,6 +13,7 @@ public class RegisterUserCommandHandler(
     IUnitOfWork unitOfWork,
     IPasswordHasher passwordHasher,
     IJwtTokenGenerator jwtTokenGenerator,
+    IEmployeeRepository employeeRepository,
     IUserRoleRepository userRoleRepository
     ) :IRequestHandler<RegisterUserCommand , Result<AuthResponseDto>>
 {
@@ -30,19 +31,35 @@ public class RegisterUserCommandHandler(
         if (emailExists)
             return UserErrors.EmailAlreadyExists;
 
-        // 3. Resolve the default role.
+        // 3. If an employee link was requested, validate it.
+        if (request.EmployeeId is { } employeeId)
+        {
+            var employeeExists = await employeeRepository.ExistsByIdAsync(employeeId, cancellationToken);
+            if (!employeeExists)
+                return EmployeeErrors.NotFound(employeeId);
+
+            var alreadyLinked = await userRepository.ExistsByEmployeeIdAsync(employeeId, cancellationToken);
+            if (alreadyLinked)
+                return UserErrors.EmployeeAlreadyLinked;
+        }
+
+        // 4. Resolve the default role.
         var roleId = await userRoleRepository.GetIdByNameAsync("Employee", cancellationToken);
         if (roleId is null)                                  
             return UserRoleErrors.DefaultRoleMissing;
 
-        // 4. Hash, then wrap.
+        // 5. Hash, then wrap.
         var hash = passwordHasher.Hash(request.Password);
         var passwordHashResult = PasswordHash.Create(hash);
         if (!passwordHashResult.IsSuccess)
             return passwordHashResult.Error!;
 
-        // 5. Build, add, save.
-        var userResult = User.Create(emailResult.Value!, passwordHashResult.Value!, roleId.Value, employeeId: null);
+        // 6. Build, add, save.
+        var userResult = User.Create(
+            emailResult.Value!,
+            passwordHashResult.Value!,
+            roleId.Value,
+            employeeId: request.EmployeeId);
         if (!userResult.IsSuccess)
             return userResult.Error!;
 

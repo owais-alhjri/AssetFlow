@@ -43,10 +43,14 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         // A user MAY be linked to an employee (nullable FK).
         builder.HasOne(u => u.Employee)
-            .WithMany()
-            .HasForeignKey(u => u.EmployeeId)
+            .WithOne()
+            .HasForeignKey<User>(u => u.EmployeeId)
             .IsRequired(false)                        // ← the nullable relationship
-            .OnDelete(DeleteBehavior.SetNull);        // delete employee → user.EmployeeId becomes null
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasIndex(u => u.EmployeeId)
+            .IsUnique()
+            .HasFilter("\"EmployeeId\" IS NOT NULL");// delete employee → user.EmployeeId becomes null
 
         builder.Property(u => u.CreatedAt)
             .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));

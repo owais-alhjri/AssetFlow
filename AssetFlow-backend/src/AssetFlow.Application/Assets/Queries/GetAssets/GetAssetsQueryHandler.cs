@@ -13,9 +13,12 @@ public class GetAssetsQueryHandler(IAssetRepository assetRepository)
         CancellationToken cancellationToken
         )
     {
+        var pageNumber = request.PageNumber < 1 ? 1 : request.PageNumber;
+        var pageSize = request.PageSize is < 1 or > 100 ? 20 : request.PageSize;
+
         var (assets, totalCount) = await assetRepository.GetPagedAsync(
-            request.PageNumber,
-            request.PageSize,
+            pageNumber,
+            pageSize,
             request.Search,
             request.StatusId,
             request.CategoryId,
@@ -26,8 +29,8 @@ public class GetAssetsQueryHandler(IAssetRepository assetRepository)
         {
             Items = items,
             TotalCount = totalCount,
-            PageNumber = request.PageNumber,
-            PageSize = request.PageSize
+            PageNumber = pageNumber,
+            PageSize = pageSize
         };
     }
 }

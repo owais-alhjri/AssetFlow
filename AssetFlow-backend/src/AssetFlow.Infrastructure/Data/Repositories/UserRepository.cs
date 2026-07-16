@@ -25,4 +25,7 @@ public class UserRepository(AssetFlowDbContext assetFlowDb) : IUserRepository
             .Include(u => u.Role)              // ← without this, user.Role.Name throws on login
             .FirstOrDefaultAsync(u => u.Email.Value == normalized, cancellationToken);
     }
+    public Task<bool> ExistsByEmployeeIdAsync(Guid employeeId, CancellationToken ct) =>
+        assetFlowDb.Users.AnyAsync(u => u.EmployeeId == employeeId, ct);
+
 }

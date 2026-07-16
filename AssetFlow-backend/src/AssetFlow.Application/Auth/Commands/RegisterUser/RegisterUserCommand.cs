@@ -6,5 +6,6 @@ namespace AssetFlow.Application.Auth.Commands.RegisterUser;
 
 public record RegisterUserCommand(
     string Email,
-    string Password
+    string Password,
+    Guid? EmployeeId = null
     ): IRequest<Result<AuthResponseDto>>;

@@ -30,4 +30,5 @@ public static class EmployeeErrors
         new ("Employee.NotFound", $"Employee not found with this id: '{id}'.");
     public static Error DuplicateEmployeeNumber(string number) =>
         new("Employee.DuplicateEmployeeNumber", $"Duplicated Employee Number: '{number}'");
+
 }

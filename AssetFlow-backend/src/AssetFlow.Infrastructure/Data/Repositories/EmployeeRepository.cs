@@ -31,4 +31,6 @@ public class EmployeeRepository(AssetFlowDbContext assetFlowDb) : IEmployeeRepos
         return await assetFlowDb.Employees
             .AnyAsync(e => e.EmployeeNumber == employeeNumber, ct);
     }
+    public Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct) =>
+        assetFlowDb.Employees.AnyAsync(e => e.Id == id, ct);
 }
