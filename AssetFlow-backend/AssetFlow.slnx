@@ -5,4 +5,5 @@
     <Project Path="src/AssetFlow.Domain/AssetFlow.Domain.csproj" />
     <Project Path="src/AssetFlow.Infrastructure/AssetFlow.Infrastructure.csproj" />
   </Folder>
+  <Project Path="../tests/AssetFlow.Application.UnitTests/AssetFlow.Application.UnitTests.csproj" />
 </Solution>
