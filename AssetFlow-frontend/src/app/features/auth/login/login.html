@@ -1,0 +1,84 @@
+<div class="auth-container">
+    <mat-card class="image-card">
+        <mat-card-content>
+            <img src="/AssetFlowLogo.png" alt="AssetFlow" class="login-logo">
+        </mat-card-content>
+            <mat-card-header>
+            <mat-card-title>Welcome Back</mat-card-title>
+            <mat-card-subtitle>Sign in to your account</mat-card-subtitle>
+        </mat-card-header>
+    </mat-card>
+    <mat-card class="auth-card">
+
+        <mat-card-content>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Email</mat-label>
+                    <input
+                        matInput
+                        type="email"
+                        formControlName="email"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                     />
+                    <mat-icon matPrefix>email</mat-icon>
+                        <mat-error>
+                            {{
+                                email.errors?.["required"]
+                                ? "Email is required"
+                                : "Enter a valid email"
+                            }}
+                        </mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Password</mat-label>
+                    <input
+                        matInput
+                        [type]="hidePassword ? 'password' : 'text'"
+                        formControlName="password"
+                        autocomplete="current-password"
+                    />
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        type="button"
+                        (click)="hidePassword = ! hidePassword"
+                        [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'"
+                        [attr.aria-pressed]="!hidePassword"
+                    >
+                    <mat-icon>
+                        {{
+                            hidePassword ? "visibility_off": "visibility"
+                        }}
+                    </mat-icon>
+                    </button>
+                        <mat-error>
+                            {{
+                                password.errors?.["required"]
+                                ? "Password is required"
+                                : "Minimum 6 characters"
+                            }}
+                        </mat-error>
+                </mat-form-field>
+
+                @if (errorMessage) {
+                    <p class="error-message">{{errorMessage}}</p>
+                }
+
+                <button
+                    mat-raised-button
+                    color="primary"
+                    type="submit"
+                    class="full-width submit-btn"
+                    [disabled]="form.invalid || isSubmitting"
+                    >
+                    @if(isSubmitting){
+                        <mat-spinner diameter="20" />
+                    }@else {
+                        Login
+                    }    
+                </button> 
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

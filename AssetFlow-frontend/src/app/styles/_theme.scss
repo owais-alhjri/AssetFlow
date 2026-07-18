@@ -1,0 +1,129 @@
+// =============================================================================
+// AssetFlow — brand palettes + semantic tokens
+//
+// This file does NOT emit a Material theme. It exports two palette maps that
+// styles.scss feeds into mat.theme(), and defines the --af-* CSS custom
+// properties. Keeping all Material emission in styles.scss avoids running two
+// competing theme systems.
+//
+// Usage (in src/styles.scss):
+//   @use './app/styles/theme' as af;
+//   ... primary: af.$af-primary-palette, tertiary: af.$af-tertiary-palette ...
+// =============================================================================
+
+@use 'sass:map';
+
+// -----------------------------------------------------------------------------
+// Tonal palettes (0=black … 100=white). Seeded from the brand hexes; tone ~30
+// is the brand color. These are hand-derived approximations of HCT tones — for
+// pixel-exact ramps, regenerate from the Material 3 theme builder and paste its
+// $primary-palette / $tertiary-palette maps over these.
+// -----------------------------------------------------------------------------
+$_palettes: (
+  // ----- BLUE (primary), seeded from #1E3A8A -----
+  primary: (
+    0:   #000000, 10: #001849, 20: #002c72, 25: #00368b, 30: #1e3a8a,
+    35:  #2a4699, 40: #3653a8, 50: #506dc4, 60: #6b88e1, 70: #87a3fe,
+    80:  #b0c3ff, 90: #dbe1ff, 95: #eff0ff, 98: #faf8ff, 99: #fefbff, 100: #ffffff,
+  ),
+  secondary: (
+    0:   #000000, 10: #131c2b, 20: #283141, 25: #333c4c, 30: #3e4758,
+    35:  #4a5264, 40: #565e70, 50: #6f7789, 60: #8891a4, 70: #a3abbf,
+    80:  #bec6db, 90: #dae2f8, 95: #eaf1ff, 98: #f9f9ff, 99: #fefbff, 100: #ffffff,
+  ),
+  // ----- TEAL (tertiary), seeded from #0D9488 -----
+  tertiary: (
+    0:   #000000, 10: #00201c, 20: #003731, 25: #00443c, 30: #005048,
+    35:  #005d54, 40: #006a5f, 50: #0d9488, 60: #23b0a2, 70: #43ccbd,
+    80:  #62e8d8, 90: #a6f2e6, 95: #c4fff5, 98: #e5fff9, 99: #f2fffb, 100: #ffffff,
+  ),
+  // ----- NEUTRAL (surfaces / backgrounds), slate-tinted -----
+  neutral: (
+    0:   #000000, 10: #191c20, 20: #2e3035, 25: #393b40, 30: #45474b,
+    35:  #505257, 40: #5c5e63, 50: #75777c, 60: #8f9196, 70: #aaabb1,
+    80:  #c5c6cc, 90: #e2e2e9, 95: #f0f0f7, 98: #f9f9ff, 99: #fefbff, 100: #ffffff,
+    4:   #0c0e12, 6: #111318, 12: #1d2024, 17: #272a2e, 22: #313438,
+    24:  #363940, 87: #d9dae0, 92: #e8e8ee, 94: #eeedf4, 96: #f3f3fa,
+  ),
+  neutral-variant: (
+    0:   #000000, 10: #171c22, 20: #2c3137, 25: #373c42, 30: #43474e,
+    35:  #4f535a, 40: #5b5f66, 50: #73777f, 60: #8d9199, 70: #a8abb4,
+    80:  #c3c7cf, 90: #dfe3eb, 95: #edf1f9, 98: #f9f9ff, 99: #fefbff, 100: #ffffff,
+  ),
+  error: (
+    0:   #000000, 10: #410002, 20: #690005, 25: #7e0007, 30: #93000a,
+    35:  #a80710, 40: #ba1a1a, 50: #de3730, 60: #ff5449, 70: #ff897d,
+    80:  #ffb4ab, 90: #ffdad6, 95: #ffedea, 98: #fff8f7, 99: #fffbff, 100: #ffffff,
+  ),
+);
+
+$_rest: (
+  secondary:       map.get($_palettes, secondary),
+  neutral:         map.get($_palettes, neutral),
+  neutral-variant: map.get($_palettes, neutral-variant),
+  error:           map.get($_palettes, error),
+);
+
+// Exported for styles.scss → mat.theme()
+$af-primary-palette:  map.merge(map.get($_palettes, primary),  $_rest);
+$af-tertiary-palette: map.merge(map.get($_palettes, tertiary), $_rest);
+
+// -----------------------------------------------------------------------------
+// Brand + semantic tokens (referenced by your own components)
+// -----------------------------------------------------------------------------
+:root {
+  // Brand
+  --af-primary:        #1e3a8a;
+  --af-primary-hover:  #142863;
+  --af-accent:         #0d9488;
+  --af-accent-hover:   #0a7268;
+
+  // Surfaces & text (slate). --af-bg deepened so the page isn't near-white.
+  --af-bg:             #eef2f7;  // tinted page background (was #f8fafc)
+  --af-surface:        #ffffff;  // cards, dialogs — stay white to pop off the page
+  --af-border:         #e2e8f0;  // hairline dividers
+  --af-text:           #0f172a;  // primary text
+  --af-text-muted:     #475569;  // secondary text
+  --af-text-subtle:    #94a3b8;  // hints, placeholders
+
+  // Semantic — solid + light tint for badges/backgrounds
+  --af-success:        #16a34a;
+  --af-success-bg:     #dcfce7;
+  --af-warning:        #d97706;
+  --af-warning-bg:     #fef3c7;
+  --af-error:          #dc2626;
+  --af-error-bg:       #fee2e2;
+  --af-info:           #0891b2;
+  --af-info-bg:        #cffafe;
+
+  // Asset status → color (drives status-badge / asset-status.pipe)
+  --af-status-available: var(--af-success);
+  --af-status-assigned:  var(--af-accent);
+  --af-status-retired:   #64748b;
+
+  // ---------------------------------------------------------------------------
+  // Elevation. Layered shadows (tight contact + soft ambient) read as real
+  // depth; a single large blur reads as a grey smudge. Tinted with the slate
+  // text hue rather than pure black so shadows sit in the same color family
+  // as the surfaces they fall on.
+  // ---------------------------------------------------------------------------
+  --af-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --af-shadow-md: 0 1px 2px rgba(15, 23, 42, 0.06),
+                  0 4px 12px rgba(15, 23, 42, 0.06);
+  --af-shadow-lg: 0 1px 2px rgba(15, 23, 42, 0.05),
+                  0 8px 24px rgba(15, 23, 42, 0.08),
+                  0 24px 48px rgba(15, 23, 42, 0.06);
+
+  // Radii — one scale, so nested corners stay concentric.
+  --af-radius-sm: 8px;
+  --af-radius-md: 12px;
+  --af-radius-lg: 20px;
+
+  // Brand gradient for hero/marketing panels. Blue → teal travels through the
+  // two brand hues instead of dead grey, because they're adjacent-ish in hue.
+  --af-gradient-brand: linear-gradient(145deg, #1e3a8a 0%, #17507f 55%, #0d9488 100%);
+
+  // Ambient page wash — barely-there brand tint behind the flat --af-bg.
+  --af-wash-primary: rgba(30, 58, 138, 0.10);
+  --af-wash-accent:  rgba(13, 148, 136, 0.10);
+}

@@ -1,1 +1,27 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+@use './app/styles/theme' as af;
+
+html {
+  height: 100%;
+  @include mat.theme((
+    color: (
+      primary:  af.$af-primary-palette,   // brand blue, not azure
+      tertiary: af.$af-tertiary-palette,  // brand teal
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+body {
+  color-scheme: light;
+
+  // Was var(--mat-sys-surface), which is near-white. Point at the tinted
+  // page token so cards (white) sit on a soft slate background.
+  background-color: var(--af-bg);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  margin: 0;
+  height: 100%;
+}

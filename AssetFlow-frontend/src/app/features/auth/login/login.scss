@@ -1,0 +1,286 @@
+// Login. The two <mat-card>s are styled as one split panel: the brand half
+// (gradient + logo) and the form half sit flush against each other with a
+// single shared shadow, so they read as one object instead of two floating
+// cards separated by a gap.
+
+// Border-box everywhere in this component. Without it, any `width: 100%` box
+// that also has padding (the card contents below) overflows its parent by the
+// padding amount — which is what pushed the form fields past the card edges.
+:host {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+// -----------------------------------------------------------------------------
+// Page
+// -----------------------------------------------------------------------------
+.auth-container {
+  min-height: 100dvh;
+  display: grid;
+  // Brand half is a touch wider — it carries the gradient, the form half only
+  // needs enough room for two fields.
+  grid-template-columns: minmax(280px, 380px) minmax(320px, 420px);
+  align-items: stretch;
+  align-content: center;
+  justify-content: center;
+  gap: 0;
+  padding: 24px;
+  box-sizing: border-box;
+
+  background-color: var(--af-bg);
+  // Two off-canvas radial washes give the flat background some depth without
+  // competing with the panel. Fixed attachment keeps them still on scroll.
+  background-image:
+    radial-gradient(60rem 60rem at 12% -10%, var(--af-wash-primary), transparent 60%),
+    radial-gradient(50rem 50rem at 88% 110%, var(--af-wash-accent), transparent 60%);
+  background-repeat: no-repeat;
+}
+
+// -----------------------------------------------------------------------------
+// Shared panel chrome
+// -----------------------------------------------------------------------------
+.image-card,
+.auth-card {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden; // clips the gradient to the rounded outer corners
+  min-width: 0;     // grid items default to min-content; without this the
+                    // fields' intrinsic width can push the column wider
+  animation: auth-panel-in 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+// Round only the outer corners, and hang one shadow off the pair.
+.image-card {
+  border-radius: var(--af-radius-lg) 0 0 var(--af-radius-lg);
+  box-shadow: var(--af-shadow-lg);
+}
+
+.auth-card {
+  border-radius: 0 var(--af-radius-lg) var(--af-radius-lg) 0;
+  box-shadow: var(--af-shadow-lg);
+  animation-delay: 60ms;
+}
+
+// -----------------------------------------------------------------------------
+// Left: brand panel
+// -----------------------------------------------------------------------------
+.image-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 20px;
+  padding: 40px 28px;
+
+  background: var(--af-gradient-brand);
+  color: #fff;
+
+  // Faint diagonal sheen so the gradient doesn't look like a flat fill.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, rgba(255, 255, 255, 0.14), transparent 45%);
+    pointer-events: none;
+  }
+
+  // The logo is dark-on-transparent, so it needs a light plate to sit on
+  // rather than being placed directly on the gradient.
+  mat-card-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 240px;
+    margin: 0;
+    padding: 20px 24px;
+    box-sizing: border-box;
+
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: var(--af-radius-md);
+    box-shadow: 0 8px 24px rgba(2, 12, 40, 0.18);
+  }
+
+  mat-card-header {
+    display: block;
+    justify-content: center;
+    text-align: center;
+    padding: 0;
+  }
+
+  mat-card-title {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+
+  mat-card-subtitle {
+    // Tinted white rather than a grey token — grey on a saturated gradient
+    // goes muddy.
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.9375rem;
+    margin: 0;
+  }
+}
+
+.login-logo {
+  width: 100%;
+  height: auto;
+  margin: 0;
+  display: block;
+}
+
+// -----------------------------------------------------------------------------
+// Right: form panel
+// -----------------------------------------------------------------------------
+.auth-card {
+  display: flex;
+  align-items: center;
+  background: var(--af-surface);
+
+  mat-card-content {
+    width: 100%;
+    padding: 40px 32px;
+  }
+}
+
+.full-width {
+  width: 100%;
+  display: block;
+}
+
+// Tighten Material's default field rhythm; the stock 1.34em subscript gap is
+// too loose for a two-field form.
+mat-form-field.full-width {
+  margin-bottom: 32px;
+
+  // Targets the projected icon (which carries this component's encapsulation
+  // attribute), not Material's internal prefix wrapper (which doesn't).
+  mat-icon[matPrefix] {
+    color: var(--af-text-subtle);
+    margin-right: 4px;
+  }
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 12px;
+  padding: 10px 12px;
+
+  background: var(--af-error-bg);
+  color: var(--af-error);
+  border-radius: var(--af-radius-sm);
+  // Left rule keeps the block legible as an alert even at a glance.
+  border-left: 3px solid var(--af-error);
+  font-size: 0.875rem;
+  line-height: 1.4;
+
+  animation: auth-shake 320ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.submit-btn {
+  height: 48px;
+  margin-top: 12px;
+
+  border-radius: var(--af-radius-sm);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+
+  // Lift on hover, settle on press — cheap affordance, no layout cost.
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--af-shadow-md);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    transform: none;
+    box-shadow: none;
+  }
+
+  mat-spinner {
+    margin: 0 auto;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Phone / tablet — stack into a single centered column
+// -----------------------------------------------------------------------------
+@media (max-width: 800px) {
+  .auth-container {
+    grid-template-columns: minmax(0, 420px);
+    grid-template-rows: auto auto;
+    align-content: center;
+    padding: 24px 16px;
+  }
+
+  // Radii flip from side-by-side to stacked.
+  .image-card {
+    border-radius: var(--af-radius-lg) var(--af-radius-lg) 0 0;
+    padding: 32px 24px;
+    gap: 16px;
+  }
+
+  .auth-card {
+    border-radius: 0 0 var(--af-radius-lg) var(--af-radius-lg);
+
+    mat-card-content {
+      padding: 28px 24px;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Motion
+// -----------------------------------------------------------------------------
+@keyframes auth-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes auth-shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-4px); }
+  75%      { transform: translateX(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-card,
+  .auth-card,
+  .error-message {
+    animation: none;
+  }
+
+  .submit-btn {
+    transition: none;
+
+    &:hover:not(:disabled) {
+      transform: none;
+    }
+  }
+}
