@@ -3,6 +3,7 @@ using System;
 using AssetFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AssetFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AssetFlowDbContext))]
-    partial class AssetFlowDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260719135743_UserApprovalStatus")]
+    partial class UserApprovalStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,6 +1,7 @@
 ﻿using AssetFlow.Application.Common.DTOs;
 using AssetFlow.Application.Common.Interfaces;
 using AssetFlow.Domain.Common;
+using AssetFlow.Domain.Enums;
 using AssetFlow.Domain.Errors;
 using MediatR;
 
@@ -25,6 +26,12 @@ public class LoginUserCommandHandler(
         var passwordVerify = passwordHasher.Verify(request.Password, user.PasswordHash.Value);
         if (!passwordVerify)
             return UserErrors.InvalidCredentials;
+
+        if (user.Status == UserStatus.Pending)
+            return UserErrors.AccountPending;
+
+        if (user.Status == UserStatus.Rejected)
+            return UserErrors.AccountRejected;
 
         var roleName = user.Role.Name;
         var token = jwtTokenGenerator.GenerateToken(user, roleName);

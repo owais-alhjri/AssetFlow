@@ -59,5 +59,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasConversion(
                 v => v,
                 v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v);
+        builder.Property(u => u.Status)
+            .HasConversion<string>()
+            .HasMaxLength(20)
+            .IsRequired();
     }
 }

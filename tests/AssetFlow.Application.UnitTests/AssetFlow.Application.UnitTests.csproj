@@ -23,4 +23,8 @@
     <ProjectReference Include="..\..\AssetFlow-backend\src\AssetFlow.Application\AssetFlow.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Auth\" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,6 @@
 ﻿using AssetFlow.Application.Common.Interfaces;
 using AssetFlow.Domain.Entities;
+using AssetFlow.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace AssetFlow.Infrastructure.Data.Repositories;
@@ -28,4 +29,20 @@ public class UserRepository(AssetFlowDbContext assetFlowDb) : IUserRepository
     public Task<bool> ExistsByEmployeeIdAsync(Guid employeeId, CancellationToken ct) =>
         assetFlowDb.Users.AnyAsync(u => u.EmployeeId == employeeId, ct);
 
+
+    // Tracked — approve/reject mutate the entity.
+    public async Task<User?> GetByIdAsync(Guid id, CancellationToken ct)
+    {
+        return await assetFlowDb.Users
+            .FirstOrDefaultAsync(u => u.Id == id, ct);
+    }
+
+    public async Task<IReadOnlyList<User>> GetPendingAsync(CancellationToken ct)
+    {
+        return await assetFlowDb.Users
+            .AsNoTracking()
+            .Where(u => u.Status == UserStatus.Pending)
+            .OrderBy(u => u.CreatedAt)
+            .ToListAsync(ct);
+    }
 }

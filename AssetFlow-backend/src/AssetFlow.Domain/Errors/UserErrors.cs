@@ -13,6 +13,15 @@ public static class UserErrors
     public static readonly Error EmailAlreadyExists =
         new("User.EmailAlreadyExists", "A user with this email already exists.");
 
-    public static readonly Error EmployeeAlreadyLinked =
-        new("User.EmployeeAlreadyLinked", "This employee is already linked to a user account.");
+    public static readonly Error NotPending =
+        new("User.NotPending", "This registration has already been reviewed.");
+
+    public static readonly Error AccountPending =
+        new("User.AccountPending", "Your account is awaiting admin approval.");
+
+    public static readonly Error AccountRejected =
+        new("User.AccountRejected", "Your registration was not approved.");
+
+    public static Error NotFound(Guid id) =>
+        new("User.NotFound", $"No user was found with ID '{id}'.");
 }

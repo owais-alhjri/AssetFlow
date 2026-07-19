@@ -1,11 +1,11 @@
-﻿using AssetFlow.Application.Common.DTOs;
-using AssetFlow.Domain.Common;
+﻿using AssetFlow.Domain.Common;
 using MediatR;
 
 namespace AssetFlow.Application.Auth.Commands.RegisterUser;
 
 public record RegisterUserCommand(
     string Email,
-    string Password,
-    Guid? EmployeeId = null
-    ): IRequest<Result<AuthResponseDto>>;
+    string Password
+) : IRequest<Result<RegisterUserResponse>>;
+
+public record RegisterUserResponse(string Email, string Status);
