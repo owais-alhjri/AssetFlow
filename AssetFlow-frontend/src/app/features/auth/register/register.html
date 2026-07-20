@@ -4,8 +4,8 @@
       <img src="/AssetFlowLogo.png" alt="AssetFlow" class="assetFlow-logo" />
     </mat-card-content>
     <mat-card-header>
-      <mat-card-title>Welcome Back</mat-card-title>
-      <mat-card-subtitle>Sign in to your account</mat-card-subtitle>
+      <mat-card-title>Register</mat-card-title>
+      <mat-card-subtitle>Sign up to create an account</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
   <mat-card class="auth-card">
@@ -31,13 +31,13 @@
             matInput
             [type]="hidePassword() ? 'password' : 'text'"
             formControlName="password"
-            autocomplete="current-password"
+            autocomplete="new-password"
           />
           <button
             mat-icon-button
             matSuffix
             type="button"
-            (click)="hidePassword.set( !hidePassword)"
+            (click)="hidePassword.set(!hidePassword)"
             [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'"
             [attr.aria-pressed]="!hidePassword()"
           >
@@ -66,15 +66,15 @@
           @if (isSubmitting()) {
             <mat-spinner diameter="20" />
           } @else {
-            Login
+            Register
           }
         </button>
       </form>
     </mat-card-content>
     <mat-card-actions>
       <p class="register-link">
-        Don't have an account?
-        <a routerLink="/register">Register here</a>
+        You have an account?
+        <a routerLink="/login">Login here</a>
       </p>
     </mat-card-actions>
   </mat-card>

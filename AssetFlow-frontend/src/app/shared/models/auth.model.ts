@@ -6,3 +6,13 @@ export interface LoginRequest {
 export interface LoginResponse {
   token: string;
 }
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterResponse {
+  email: string;
+  status: string;
+}
