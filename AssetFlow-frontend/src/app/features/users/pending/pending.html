@@ -1,0 +1,17 @@
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (errorMessage()) {
+  <p class="error-message">{{ errorMessage() }}</p>
+} @else {
+  @for (user of users(); track user.id) {
+    <div class="request-row">
+      <h3>{{ user.email }}</h3>
+      <h5>{{ user.status }}</h5>
+      <p>{{ user.requestedAt }}</p>
+      <button (click)="approveUser(user.id)">Approve</button>
+      <button (click)="rejectUser(user.id)">Reject</button>
+    </div>
+  } @empty {
+    <p class="empty-state">No pending requests.</p>
+  }
+}

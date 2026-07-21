@@ -1,5 +1,6 @@
 import { authGuard } from './core/auth/auth-guard';
 import { Routes } from '@angular/router';
+import { roleGuard } from './core/auth/role-guard';
 
 export const routes: Routes = [
     {
@@ -9,6 +10,11 @@ export const routes: Routes = [
     {
         path: 'register',
         loadComponent:()=> import('./features/auth/register/register').then(m=>m.Register),
+    },
+    {
+        path: 'users/pending',
+        loadComponent:()=> import('./features/users/pending/pending').then(m=>m.Pending),
+        canActivate: [roleGuard], data: {roles: ['Admin']}
     },
     {
         path: '',

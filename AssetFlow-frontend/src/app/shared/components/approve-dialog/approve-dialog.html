@@ -1,0 +1,69 @@
+<h2 mat-dialog-title>Fill Employee Info Approval</h2>
+<form [formGroup]="form">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline">
+      <mat-label>Employee Number</mat-label>
+      <input matInput formControlName="employeeNumber" />
+      <mat-error>{{
+        employeeNumber.errors?.['required']
+          ? 'employee number is required'
+          : 'Enter a valid employeeNumber'
+      }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>First Name</mat-label>
+      <input matInput formControlName="firstName" />
+      <mat-error>{{
+        firstName.errors?.['required']
+          ? 'firstName is required'
+          : 'Enter a valid firstName'
+      }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Last Name</mat-label>
+      <input matInput formControlName="lastName" />
+      <mat-error>{{
+        lastName.errors?.['required']
+          ? 'lastName is required'
+          : 'Enter a valid lastName'
+      }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Department</mat-label>
+      <input matInput formControlName="department" />
+      <mat-error>{{
+        department.errors?.['required']
+          ? 'department is required'
+          : 'Enter a valid department'
+      }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Job Title</mat-label>
+      <input matInput formControlName="jobTitle" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Hire Date</mat-label>
+
+      <input matInput [matDatepicker]="picker" formControlName="hireDate" />
+
+      <mat-datepicker-toggle matIconSuffix [for]="picker"> </mat-datepicker-toggle>
+
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error>{{
+        hireDate.errors?.['required']
+          ? 'hireDate is required'
+          : 'Enter a valid hireDate'
+      }}</mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+</form>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+
+  <button mat-flat-button color="primary" (click)="save()">Save</button>
+</mat-dialog-actions>
