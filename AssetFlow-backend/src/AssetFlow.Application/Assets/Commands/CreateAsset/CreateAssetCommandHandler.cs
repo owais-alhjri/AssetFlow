@@ -66,6 +66,8 @@ public class CreateAssetCommandHandler(
         await assetRepository.AddAsync(asset, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return AssetDto.FromEntity(asset);
+        // 6. Re-load with Category/Status navigations so the DTO can map their names.
+        var saved = await assetRepository.GetByIdAsync(asset.Id, cancellationToken);
+        return AssetDto.FromEntity(saved!);
     }
 }

@@ -20,6 +20,8 @@ public class AssetDto
     public string? Notes { get; init; }
     public DateTime CreatedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
+    public required string CategoryName { get; init; }
+    public required string StatusName { get; init; }
 
     public static AssetDto FromEntity(Asset asset) => new()
     {
@@ -38,6 +40,8 @@ public class AssetDto
         Location = asset.Location,
         Notes = asset.Notes,
         CreatedAt = asset.CreatedAt,
-        UpdatedAt = asset.UpdatedAt
+        UpdatedAt = asset.UpdatedAt,
+        CategoryName = asset.Category.Name,
+        StatusName = asset.Status.Name
     };
 }

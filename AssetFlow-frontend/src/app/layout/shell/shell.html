@@ -1,1 +1,19 @@
-<p>shell works!</p>
+<mat-toolbar>
+      <img src="/AssetFlowLogo.png" alt="AssetFlow" class="assetFlow-logo" />
+  <a class="home-link" routerLink="/">AssetFlow</a> 
+  <span class="spacer"></span>
+  <button mat-button (click)="logout()">Logout</button>
+</mat-toolbar>
+<mat-sidenav-container>
+<mat-sidenav mode="side" opened>
+  <mat-nav-list>
+    <a mat-list-item routerLink="/assets">Assets</a>
+    @if (isAdmin()) {
+      <a mat-list-item routerLink="/users/pending">Requests</a>
+    }
+  </mat-nav-list>
+</mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet />
+  </mat-sidenav-content>
+</mat-sidenav-container>

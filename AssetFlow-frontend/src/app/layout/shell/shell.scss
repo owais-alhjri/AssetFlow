@@ -1,0 +1,30 @@
+.home-link{
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}
+a:hover {
+    text-decoration:none; /* Add it back on hover for clarity */
+    color: black;
+}
+.assetFlow-logo{
+    width: 50px;
+}
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+mat-sidenav-container {
+  // toolbar is a sibling above the container, so subtract its height
+  height: calc(100vh - 64px);
+}
+
+mat-sidenav {
+  width: 220px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
