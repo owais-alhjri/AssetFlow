@@ -25,7 +25,11 @@ export const routes: Routes = [
       },
       {
         path: 'assets',
-        loadComponent: () => import('./features/assets/assets/assets').then(m=>m.Assets)
+        loadComponent: () => import('./features/assets/assets/assets').then(m=>m.Assets),
+      },
+      {
+        path: 'assets/:id',
+        loadComponent:()=> import('./features/assets/asset-detail/asset-detail').then(m=>m.AssetDetail),
       },
       {path: '', redirectTo: 'assets', pathMatch: 'full'}
     ],

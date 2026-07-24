@@ -4,7 +4,9 @@
       <mat-card-header>
         <mat-card-title>Assets</mat-card-title>
         <mat-card-subtitle>{{ totalAssets() }} assets</mat-card-subtitle>
-        <button mat-flat-button>+ Add Asset</button>
+        @if(isAdmin()){
+        <button mat-flat-button (click)="openAssetDialog()" >+ Add Asset</button>
+        }
       </mat-card-header>
     </mat-card-content>
   </mat-card>
@@ -63,9 +65,11 @@
               </td>
               <td>{{ asset.condition }}</td>
               <td>
-                <button mat-icon-button><mat-icon>visibility</mat-icon></button>
-                <button mat-icon-button><mat-icon>edit</mat-icon></button>
+                <button mat-icon-button routerLink="/assets/:id" ><mat-icon>visibility</mat-icon></button>
+                @if (isAdmin()) {
+                <button mat-icon-button (click)="openAssetDialog(asset)"  ><mat-icon>edit</mat-icon></button>
                 <button mat-icon-button><mat-icon>delete</mat-icon></button>
+                }
               </td>
             </tr>
           } @empty {

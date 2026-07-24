@@ -42,3 +42,11 @@ export interface UpdateAssetRequest {
   location?: string | null;
   notes?: string | null;
 }
+
+export enum AssetCondition{
+  Excellent = 'Excellent',
+  Good = 'Good',
+  Fair = 'Fair',
+  Poor = 'Poor',
+  Damaged = 'Damaged',
+}

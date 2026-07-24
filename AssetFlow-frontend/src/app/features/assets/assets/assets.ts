@@ -21,6 +21,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CategoriesServices } from '../../../core/services/CategoriesServices';
 import { Category } from '../../../shared/models/category.model';
+import { Auth } from '../../../core/auth/auth';
+import { RouterLink } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { AssetFormDialog } from '../asset-form-dialog/asset-form-dialog';
 
 @Component({
   selector: 'app-assets',
@@ -40,6 +44,7 @@ import { Category } from '../../../shared/models/category.model';
     MatButtonModule,
     MatFormFieldModule,
     ReactiveFormsModule,
+    RouterLink,
   ],
   templateUrl: './assets.html',
   styleUrl: './assets.scss',
@@ -47,6 +52,10 @@ import { Category } from '../../../shared/models/category.model';
 export class Assets implements OnInit {
   private assetServices = inject(AssetsServices);
   private categoryServices = inject(CategoriesServices);
+  private auth = inject(Auth);
+  private dialog = inject(MatDialog);
+
+  isAdmin = () => this.auth.getRole() === 'Admin';
 
   assets = signal<Asset[]>([]);
   categories = signal<Category[]>([]);
@@ -86,8 +95,8 @@ export class Assets implements OnInit {
       this.loadAssets();
     });
 
-    this.categoryControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value)=>{
-      this.categoryId.set(value?? undefined);
+    this.categoryControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
+      this.categoryId.set(value ?? undefined);
       this.page.set(1);
       this.loadAssets();
     });
@@ -105,7 +114,6 @@ export class Assets implements OnInit {
   }
 
   loadCategories() {
-
     this.categoryServices.getCategories().subscribe({
       next: (res) => this.categories.set(res),
       error: () => this.categories.set([]),
@@ -136,5 +144,24 @@ export class Assets implements OnInit {
           this.isLoading.set(false);
         },
       });
+  }
+
+  openAssetDialog(asset?: Asset) {
+    const dialogRef = this.dialog.open(AssetFormDialog, {
+      width: '600px',
+      data: asset ? {asset} : undefined,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if(!result) return;
+      const call =
+        result.mode === 'create'
+          ? this.assetServices.createAsset(result.dto)
+          : this.assetServices.updateAsset(result.id, result.dto);
+      call.subscribe({
+        next: () => this.loadAssets(),
+        error: () => this.errorMessage.set('Could not create the asset. Please try again'),
+      });
+    });
   }
 }

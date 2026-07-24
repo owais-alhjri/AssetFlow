@@ -1,0 +1,68 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit asset' : 'Add asset' }}</h2>
+<form [formGroup]="form">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline">
+      <mat-label>Asset Tag</mat-label>
+      <input matInput type="text" formControlName="tag" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Asset Name</mat-label>
+      <input matInput type="text" formControlName="name" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Serial Number</mat-label>
+      <input matInput type="text" formControlName="serialNumber" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="categoryId">
+        @for (category of categories(); track category.id) {
+          <mat-option [value]="category.id">{{ category.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Condition</mat-label>
+      <mat-select formControlName="condition">
+        @for (condition of conditions; track condition) {
+          <mat-option [value]="condition">{{ condition }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Purchase Date</mat-label>
+      <input matInput [matDatepicker]="purchasePicker" formControlName="purchaseDate" />
+      <mat-datepicker-toggle matIconSuffix [for]="purchasePicker"></mat-datepicker-toggle>
+      <mat-datepicker #purchasePicker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Purchase Price</mat-label>
+      <input matInput type="number" formControlName="purchasePrice" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Warranty Expiry Date</mat-label>
+      <input matInput [matDatepicker]="warrantyPicker" formControlName="warrantyExpiryDate" />
+      <mat-datepicker-toggle matIconSuffix [for]="warrantyPicker"></mat-datepicker-toggle>
+      <mat-datepicker #warrantyPicker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Next Maintenance Date</mat-label>
+      <input matInput [matDatepicker]="maintenancePicker" formControlName="nextMaintenanceDate" />
+      <mat-datepicker-toggle matIconSuffix [for]="maintenancePicker"></mat-datepicker-toggle>
+      <mat-datepicker #maintenancePicker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>location</mat-label>
+      <input matInput formControlName="location" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Notes</mat-label>
+      <input matInput formControlName="notes" />
+    </mat-form-field>
+  </mat-dialog-content>
+</form>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+
+  <button mat-flat-button color="primary" (click)="save()">Save</button></mat-dialog-actions
+>
