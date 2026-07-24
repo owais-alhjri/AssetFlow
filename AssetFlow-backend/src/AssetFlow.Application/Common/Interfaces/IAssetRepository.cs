@@ -11,7 +11,7 @@ public interface IAssetRepository
         int pageNumber,
         int pageSize,
         string? search,
-        Guid? statusId,
+        string? statusId,
         Guid? categoryId,
         CancellationToken cancellationToken);
 }

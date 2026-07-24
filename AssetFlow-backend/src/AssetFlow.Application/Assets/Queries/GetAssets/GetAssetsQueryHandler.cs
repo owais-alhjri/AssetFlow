@@ -20,7 +20,7 @@ public class GetAssetsQueryHandler(IAssetRepository assetRepository)
             pageNumber,
             pageSize,
             request.Search,
-            request.StatusId,
+            request.Status,
             request.CategoryId,
             cancellationToken);
 

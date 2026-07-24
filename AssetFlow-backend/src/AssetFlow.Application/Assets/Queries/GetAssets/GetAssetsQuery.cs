@@ -8,6 +8,6 @@ public record GetAssetsQuery(
     int PageNumber = 1,
     int PageSize = 20,
     string? Search = null,
-    Guid? StatusId = null,
+    string? Status = null,
     Guid? CategoryId = null
     ): IRequest<Result<PagedResult<AssetDto>>>;

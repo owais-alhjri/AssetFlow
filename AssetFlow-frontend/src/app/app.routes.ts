@@ -23,6 +23,10 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { roles: ['Admin'] },
       },
+      {
+        path: 'assets',
+        loadComponent: () => import('./features/assets/assets/assets').then(m=>m.Assets)
+      },
       {path: '', redirectTo: 'assets', pathMatch: 'full'}
     ],
   },

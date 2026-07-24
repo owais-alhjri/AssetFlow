@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { Users } from '../../../core/services/users';
+import { UsersServices } from '../../../core/services/usersServices';
 import { PendingUser } from '../../../shared/models/user.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ApproveDialog } from '../../../shared/components/approve-dialog/approve-dialog';
@@ -12,7 +12,7 @@ import { RejectDialog } from '../../../shared/components/reject-dialog/reject-di
   styleUrl: './pending.scss',
 })
 export class Pending implements OnInit {
-  private usersService = inject(Users);
+  private usersService = inject(UsersServices);
   private dialog = inject(MatDialog);
 
   users = signal<PendingUser[]>([]);

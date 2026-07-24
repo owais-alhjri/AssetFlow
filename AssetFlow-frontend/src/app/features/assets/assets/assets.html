@@ -1,0 +1,88 @@
+<div>
+  <mat-card>
+    <mat-card-content>
+      <mat-card-header>
+        <mat-card-title>Assets</mat-card-title>
+        <mat-card-subtitle>{{ totalAssets() }} assets</mat-card-subtitle>
+        <button mat-flat-button>+ Add Asset</button>
+      </mat-card-header>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <!-- Always visible: search must NOT be inside the loading guard -->
+    <mat-form-field appearance="fill">
+      <mat-label>Search Box</mat-label>
+      <input
+        matInput
+        [formControl]="searchControl"
+        placeholder="Name or Tag...">
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Status</mat-label>
+        <mat-select [formControl]="statusControl">
+            <mat-option [value]="undefined">All</mat-option>
+            <mat-option [value]="'Available'">Available</mat-option>
+            <mat-option [value]="'Assigned'">Assigned</mat-option>
+            <mat-option [value]="'Retired'">Retired</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <mat-select>
+        <mat-option></mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    @if (isLoading()) {
+      <p>Loading...</p>
+    } @else if (errorMessage()) {
+      <p>{{ errorMessage() }}</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Tag</th>
+            <th scope="col">Name</th>
+            <th scope="col">Category</th>
+            <th scope="col">Status</th>
+            <th scope="col">Condition</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (asset of assets(); track asset.id) {
+            <tr>
+              <td>{{ asset.tag }}</td>
+              <td>{{ asset.name }}</td>
+              <td>{{ asset.categoryName }}</td>
+              <td class="status-color"
+                  [style.background-color]="color(asset.statusName)">
+                {{ asset.statusName }}
+              </td>
+              <td>{{ asset.condition }}</td>
+              <td>
+                <button mat-icon-button><mat-icon>visibility</mat-icon></button>
+                <button mat-icon-button><mat-icon>edit</mat-icon></button>
+                <button mat-icon-button><mat-icon>delete</mat-icon></button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5">No assets available..</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+
+    <!-- Paginator outside the table, and ideally outside the loading guard -->
+    <mat-paginator
+      [length]="totalAssets()"
+      [pageSize]="pageSize()"
+      (page)="onPageChange($event)"
+      [pageSizeOptions]="[5, 10, 20, 25]"
+      showFirstLastButtons />
+  </mat-card>
+</div>

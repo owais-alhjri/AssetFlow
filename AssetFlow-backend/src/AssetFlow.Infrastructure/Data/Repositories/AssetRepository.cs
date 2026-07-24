@@ -32,7 +32,7 @@ public class AssetRepository(AssetFlowDbContext assetFlowDb) : IAssetRepository
         int pageNumber,
         int pageSize,
         string? search,
-        Guid? statusId,
+        string? status,
         Guid? categoryId,
         CancellationToken cancellationToken)
     {
@@ -48,9 +48,9 @@ public class AssetRepository(AssetFlowDbContext assetFlowDb) : IAssetRepository
         }
         
         // Filter by status
-        if (statusId.HasValue)
+        if (!string.IsNullOrWhiteSpace(status))
         {
-            query = query.Where(a => a.StatusId == statusId);
+            query = query.Where(a => a.Status.Name == status);
         }
 
         // Filter by category

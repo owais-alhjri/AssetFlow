@@ -1,4 +1,4 @@
-import { ApproveUserRequest, PendingUser } from './../../shared/models/user.model';
+import { ApproveUserRequest, PendingUser } from '../../shared/models/user.model';
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { environment } from "../../../environments/environment";
@@ -6,7 +6,7 @@ import { Observable } from "rxjs";
 import { EmployeeDto } from '../../shared/models/employee.model';
 
 @Injectable({providedIn: 'root'})
-export class Users{
+export class UsersServices{
     private http = inject(HttpClient);
     private base = `${environment.apiUrl}/users`
 
