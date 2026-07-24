@@ -20,17 +20,16 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CategoriesServices } from '../../../core/services/CategoriesServices';
+import { Category } from '../../../shared/models/category.model';
 
 @Component({
   selector: 'app-assets',
   standalone: true,
   imports: [
     MatTableModule,
-    MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
-    MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
     MatCard,
@@ -40,7 +39,7 @@ import { CategoriesServices } from '../../../core/services/CategoriesServices';
     MatCardSubtitle,
     MatButtonModule,
     MatFormFieldModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './assets.html',
   styleUrl: './assets.scss',
@@ -50,6 +49,7 @@ export class Assets implements OnInit {
   private categoryServices = inject(CategoriesServices);
 
   assets = signal<Asset[]>([]);
+  categories = signal<Category[]>([]);
   totalAssets = signal(0);
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
@@ -62,6 +62,7 @@ export class Assets implements OnInit {
 
   searchControl = new FormControl('');
   statusControl = new FormControl<string | undefined>(undefined);
+  categoryControl = new FormControl<string | undefined>(undefined);
 
   color(status: string): string {
     if (status === 'Available') return 'lightgreen';
@@ -79,47 +80,61 @@ export class Assets implements OnInit {
         this.loadAssets();
       });
 
-      this.statusControl.valueChanges
-  .pipe(takeUntilDestroyed())
-  .subscribe((value) => {
-    this.status.set(value ?? undefined);
-    this.page.set(1);          
-    this.loadAssets();
-  });
+    this.statusControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
+      this.status.set(value ?? undefined);
+      this.page.set(1);
+      this.loadAssets();
+    });
 
+    this.categoryControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value)=>{
+      this.categoryId.set(value?? undefined);
+      this.page.set(1);
+      this.loadAssets();
+    });
   }
 
   ngOnInit() {
     this.loadAssets();
+    this.loadCategories();
   }
 
-  onPageChange(e: PageEvent){
+  onPageChange(e: PageEvent) {
     this.page.set(e.pageIndex + 1);
     this.pageSize.set(e.pageSize);
     this.loadAssets();
+  }
+
+  loadCategories() {
+
+    this.categoryServices.getCategories().subscribe({
+      next: (res) => this.categories.set(res),
+      error: () => this.categories.set([]),
+    });
   }
 
   loadAssets() {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.assetServices.getAssets({
-      pageNumber: this.page(),
-      pageSize: this.pageSize(),
-      search: this.search(),
-      status: this.status(),
-      categoryId: this.categoryId(),
-    }).subscribe({
-      next: (res) => {
-        this.assets.set(res.items);
-        this.totalAssets.set(res.totalCount);
-        this.pageSize.set(res.pageSize);
-        this.isLoading.set(false);
-      },
-      error:()=> {
-        this.errorMessage.set('Failed to load assets. Please try again');
-        this.isLoading.set(false);
-      },
-    });
+    this.assetServices
+      .getAssets({
+        pageNumber: this.page(),
+        pageSize: this.pageSize(),
+        search: this.search(),
+        status: this.status(),
+        categoryId: this.categoryId(),
+      })
+      .subscribe({
+        next: (res) => {
+          this.assets.set(res.items);
+          this.totalAssets.set(res.totalCount);
+          this.pageSize.set(res.pageSize);
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.errorMessage.set('Failed to load assets. Please try again');
+          this.isLoading.set(false);
+        },
+      });
   }
 }
