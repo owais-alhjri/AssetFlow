@@ -1,1 +1,33 @@
-<p>asset-detail works!</p>
+<h2>Name: {{ asset()?.name }}</h2>
+<h2>Tag: {{ asset()?.tag }}</h2>
+<h2>Serial Number: {{ asset()?.serialNumber }}</h2>
+<h2>Category Name: {{ asset()?.categoryName }}</h2>
+<h2>Condition: {{ asset()?.condition }}</h2>
+<h2>Status: {{ asset()?.statusName }}</h2>
+<h2>Purchase Price: {{ asset()?.purchasePrice }} {{ asset()?.currency }}</h2>
+<h2>Purchase Date: {{ asset()?.purchaseDate }}</h2>
+
+@if (asset()?.warrantyExpiryDate !== null) {
+  <h2>Warranty Expiry Date: {{ asset()?.warrantyExpiryDate }}</h2>
+} @else {
+  <h2>Warranty Expiry Date: No warranty</h2>
+}
+@if (asset()?.nextMaintenanceDate !== null) {
+  <h2>Next Maintenance Date: {{ asset()?.nextMaintenanceDate }}</h2>
+} @else {
+  <h2>Next Maintenance Date: No next maintenance</h2>
+}
+@if (asset()?.location !== null) {
+  <h2>Location: {{ asset()?.location }}</h2>
+} @else {
+  <h2>Location: No location is provided</h2>
+}
+@if (asset()?.notes !== null) {
+  <h2>Notes: {{ asset()?.notes }}</h2>
+} @else {
+  <h2>Notes: No Notes is provided</h2>
+}
+<h2>created Date: {{ asset()?.createdAt | date: 'yyyy-MM-dd' }}</h2>
+@if(asset()?.updatedAt !== null){
+    <h2>Updated Date: {{ asset()?.updatedAt| date: 'yyyy-MM-dd' }}</h2>
+}
