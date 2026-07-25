@@ -1,3 +1,4 @@
+import { Asset } from './../../../shared/models/asset.model';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -15,7 +16,6 @@ import {
   MatCardTitle,
   MatCardSubtitle,
 } from '@angular/material/card';
-import { Asset } from '../../../shared/models/asset.model';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -25,6 +25,7 @@ import { Auth } from '../../../core/auth/auth';
 import { RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AssetFormDialog } from '../asset-form-dialog/asset-form-dialog';
+import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-assets',
@@ -161,6 +162,24 @@ export class Assets implements OnInit {
       call.subscribe({
         next: () => this.loadAssets(),
         error: () => this.errorMessage.set('Could not create the asset. Please try again'),
+      });
+    });
+  }
+
+  deleteAsset(asset: Asset){
+    const dialogRef = this.dialog.open(ConfirmDialog,{
+      width: '400px',
+      data:{
+        title: "Delete Asset",
+        message: `Delete ${asset.tag}? This cannot be undone.`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed)=>{
+      if(!confirmed)return;
+      this.assetServices.deleteAsset(asset.id).subscribe({
+        next:()=> this.loadAssets(),
+        error:()=> this.errorMessage.set('Could not delete the asset, Please try again.'),
       });
     });
   }

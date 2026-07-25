@@ -2,21 +2,21 @@ import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
-export interface RejectDialogData {
+export interface ConfirmDialogData {
   title: string;
   message: string;
 }
 
 @Component({
-  selector: 'app-reject-dialog',
+  selector: 'app-confirm-dialog',
   standalone: true,
   imports: [MatButtonModule, MatDialogModule],
-  templateUrl: './reject-dialog.html',
-  styleUrl: './reject-dialog.scss',
+  templateUrl: './confirm-dialog.html',
+  styleUrl: './confirm-dialog.scss',
 })
-export class RejectDialog {
-  data = inject<RejectDialogData>(MAT_DIALOG_DATA);
-  private dialogRef = inject(MatDialogRef<RejectDialog, boolean>);
+export class ConfirmDialog {
+  data = inject<ConfirmDialogData>(MAT_DIALOG_DATA);
+  private dialogRef = inject(MatDialogRef<ConfirmDialog, boolean>);
 
   confirm() {
     this.dialogRef.close(true);

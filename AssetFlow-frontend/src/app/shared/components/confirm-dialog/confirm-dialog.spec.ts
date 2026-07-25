@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RejectDialog } from './reject-dialog';
+import { RejectDialog } from './confirm-dialog';
 
 describe('RejectDialog', () => {
   let component: RejectDialog;

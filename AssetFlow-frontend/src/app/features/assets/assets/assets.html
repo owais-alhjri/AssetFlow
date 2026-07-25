@@ -68,7 +68,7 @@
                 <button mat-icon-button routerLink="/assets/:id" ><mat-icon>visibility</mat-icon></button>
                 @if (isAdmin()) {
                 <button mat-icon-button (click)="openAssetDialog(asset)"  ><mat-icon>edit</mat-icon></button>
-                <button mat-icon-button><mat-icon>delete</mat-icon></button>
+                <button mat-icon-button (click)="deleteAsset(asset)"><mat-icon>delete</mat-icon></button>
                 }
               </td>
             </tr>

@@ -3,7 +3,7 @@ import { UsersServices } from '../../../core/services/usersServices';
 import { PendingUser } from '../../../shared/models/user.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ApproveDialog } from '../../../shared/components/approve-dialog/approve-dialog';
-import { RejectDialog } from '../../../shared/components/reject-dialog/reject-dialog';
+import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-pending',
@@ -55,7 +55,7 @@ export class Pending implements OnInit {
   }
 
   rejectUser(userId: string) {
-    const dialogRef = this.dialog.open(RejectDialog, {
+    const dialogRef = this.dialog.open(ConfirmDialog, {
       width: '400px',
       data: {
         title: 'Reject user',

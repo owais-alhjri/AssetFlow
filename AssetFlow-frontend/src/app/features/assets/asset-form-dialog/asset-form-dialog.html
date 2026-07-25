@@ -4,15 +4,30 @@
     <mat-form-field appearance="outline">
       <mat-label>Asset Tag</mat-label>
       <input matInput type="text" formControlName="tag" />
+      <mat-error>
+        @if (tag.errors?.['required']) { Asset tag is required }
+        @else if (tag.errors?.['maxlength']) { Tag must be 50 characters or fewer }
+      </mat-error>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
       <mat-label>Asset Name</mat-label>
       <input matInput type="text" formControlName="name" />
+      <mat-error>
+        @if (name.errors?.['required']) { Asset name is required }
+        @else if (name.errors?.['maxlength']) { Name must be 200 characters or fewer }
+      </mat-error>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
       <mat-label>Serial Number</mat-label>
       <input matInput type="text" formControlName="serialNumber" />
+      <mat-error>
+        @if (serialNumber.errors?.['required']) { Serial number is required }
+        @else if (serialNumber.errors?.['maxlength']) { Serial number must be 100 characters or fewer }
+      </mat-error>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
       <mat-label>Category</mat-label>
       <mat-select formControlName="categoryId">
@@ -20,7 +35,9 @@
           <mat-option [value]="category.id">{{ category.name }}</mat-option>
         }
       </mat-select>
+      <mat-error>Category is required</mat-error>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
       <mat-label>Condition</mat-label>
       <mat-select formControlName="condition">
@@ -28,41 +45,60 @@
           <mat-option [value]="condition">{{ condition }}</mat-option>
         }
       </mat-select>
+      <mat-error>Condition is required</mat-error>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
       <mat-label>Purchase Date</mat-label>
       <input matInput [matDatepicker]="purchasePicker" formControlName="purchaseDate" />
       <mat-datepicker-toggle matIconSuffix [for]="purchasePicker"></mat-datepicker-toggle>
       <mat-datepicker #purchasePicker></mat-datepicker>
+      <mat-error>
+        @if (purchaseDate.errors?.['required']) { Purchase date is required }
+        @else { Enter a valid date }
+      </mat-error>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
       <mat-label>Purchase Price</mat-label>
       <input matInput type="number" formControlName="purchasePrice" />
+      <mat-error>
+        @if (purchasePrice.errors?.['required']) { Purchase price is required }
+        @else if (purchasePrice.errors?.['min']) { Price cannot be negative }
+      </mat-error>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
       <mat-label>Warranty Expiry Date</mat-label>
       <input matInput [matDatepicker]="warrantyPicker" formControlName="warrantyExpiryDate" />
       <mat-datepicker-toggle matIconSuffix [for]="warrantyPicker"></mat-datepicker-toggle>
       <mat-datepicker #warrantyPicker></mat-datepicker>
+      <mat-error>Enter a valid date</mat-error>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
       <mat-label>Next Maintenance Date</mat-label>
       <input matInput [matDatepicker]="maintenancePicker" formControlName="nextMaintenanceDate" />
       <mat-datepicker-toggle matIconSuffix [for]="maintenancePicker"></mat-datepicker-toggle>
       <mat-datepicker #maintenancePicker></mat-datepicker>
+      <mat-error>Enter a valid date</mat-error>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
-      <mat-label>location</mat-label>
+      <mat-label>Location</mat-label>
       <input matInput formControlName="location" />
+      <mat-error>Location must be 200 characters or fewer</mat-error>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
       <mat-label>Notes</mat-label>
       <input matInput formControlName="notes" />
+      <mat-error>Notes must be 1000 characters or fewer</mat-error>
     </mat-form-field>
   </mat-dialog-content>
 </form>
+
 <mat-dialog-actions align="end">
   <button mat-button (click)="cancel()">Cancel</button>
-
-  <button mat-flat-button color="primary" (click)="save()">Save</button></mat-dialog-actions
->
+  <button mat-flat-button color="primary" (click)="save()">Save</button>
+</mat-dialog-actions>
