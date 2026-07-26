@@ -9,13 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MatCard,
-  MatCardContent,
-  MatCardHeader,
-  MatCardTitle,
-  MatCardSubtitle,
-} from '@angular/material/card';
+import { MatCard } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -31,19 +26,15 @@ import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm
   selector: 'app-assets',
   standalone: true,
   imports: [
-    MatTableModule,
     MatIconModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
     MatSelectModule,
     MatInputModule,
     MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardSubtitle,
     MatButtonModule,
     MatFormFieldModule,
+    MatTooltipModule,
     ReactiveFormsModule,
     RouterLink,
   ],
@@ -74,12 +65,6 @@ export class Assets implements OnInit {
   statusControl = new FormControl<string | undefined>(undefined);
   categoryControl = new FormControl<string | undefined>(undefined);
 
-  color(status: string): string {
-    if (status === 'Available') return 'lightgreen';
-    if (status === 'Assigned') return 'lightblue';
-    if (status === 'Retired') return 'lightgray';
-    return status;
-  }
 
   constructor() {
     this.searchControl.valueChanges

@@ -1,0 +1,81 @@
+// Pending registration requests. Page shell, table card, state block and
+// status badge all come from the global page chrome in app/styles/_page.scss.
+
+:host {
+  box-sizing: border-box;
+  display: block;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+// Only four columns, but the two labelled action buttons take real width.
+.data-table {
+  min-width: 640px;
+}
+
+// An empty queue here means the work is done, so the icon reads as success
+// rather than as the neutral "nothing to see" grey the other pages use.
+// Element + class to match the global rule's specificity (see _page.scss).
+mat-icon.state__icon--ok {
+  color: var(--af-success);
+}
+
+.request-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+
+  // The shared .data-table__actions rule mutes icon buttons and turns them
+  // blue on hover. These are labelled buttons carrying their own intent, so
+  // that treatment is unset rather than inherited.
+  button {
+    color: inherit;
+    flex-shrink: 0;
+  }
+}
+
+.request-actions__approve {
+  // Teal, not the primary blue: approving is the affirmative outcome, and the
+  // brand's secondary hue is already the app's "go" color on status badges.
+  --mdc-filled-button-container-color: var(--af-accent);
+  --mdc-filled-button-label-text-color: #fff;
+
+  font-weight: 600;
+
+  &:hover {
+    --mdc-filled-button-container-color: var(--af-accent-hover);
+  }
+}
+
+.request-actions__reject {
+  color: var(--af-text-muted);
+  transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease;
+
+  // Destructive, so it stays quiet until the pointer lands on it — a
+  // permanently red button in every row reads as an error state.
+  &:hover {
+    color: var(--af-error);
+    border-color: var(--af-error);
+    background: var(--af-error-bg);
+  }
+}
+
+@media (max-width: 600px) {
+  // Side by side the two buttons get cramped once the table is scrolling
+  // horizontally anyway; stacking keeps both labels readable.
+  .request-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .request-actions__reject {
+    transition: none;
+  }
+}

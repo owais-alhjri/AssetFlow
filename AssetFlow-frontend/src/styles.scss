@@ -1,5 +1,9 @@
 @use '@angular/material' as mat;
 @use './app/styles/theme' as af;
+// Shared page chrome (.page / .page-header / .table-card / .state /
+// .status-badge). Global rather than per-component so the list pages share one
+// definition instead of three copies that drift.
+@use './app/styles/page';
 
 html {
   height: 100%;

@@ -1,17 +1,98 @@
-@for (item of employees(); track item.id) {
-    <h2>Email: {{item.email}}</h2>
-    <h2>Full Name: {{item.firstName}} {{ item.lastName}}</h2>
-    <h2>Employee Number: {{item.employeeNumber}}</h2>
-    <h2>Department: {{item.department}}</h2>
-    <h2>Hire Date: {{item.hireDate}}</h2>
-    @if (item.jobTitle !== null && item.jobTitle !== "") {
-    <h2>Job Title: {{item.jobTitle}}</h2>
-    }@else {
-        <h2>Job Title: No job title</h2>
+@let list = employees() ?? [];
+
+<div class="page">
+  <header class="page-header">
+    <div class="page-header__text">
+      <h1 class="page-header__title">Employees</h1>
+      <p class="page-header__meta">
+        {{ list.length }} {{ list.length === 1 ? 'employee' : 'employees' }}
+      </p>
+    </div>
+  </header>
+
+  <mat-card class="table-card" appearance="outlined">
+    @if (isLoading()) {
+      <div class="state" aria-live="polite">
+        <mat-spinner diameter="36" />
+        <p class="state__message">Loading employees...</p>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="state state--error" role="alert">
+        <mat-icon class="state__icon">error_outline</mat-icon>
+        <p class="state__message">{{ errorMessage() }}</p>
+        <button mat-stroked-button (click)="loadEmployees()">
+          <mat-icon>refresh</mat-icon>
+          Retry
+        </button>
+      </div>
+    } @else if (list.length === 0) {
+      <div class="state">
+        <mat-icon class="state__icon">groups</mat-icon>
+        <p class="state__title">No employees yet</p>
+        <!-- Employees aren't created directly — they're minted when an admin
+             approves a pending registration. Point at that rather than at a
+             create button this page doesn't have. -->
+        <p class="state__message">
+          Employees are created when you approve a registration request.
+        </p>
+        <button mat-stroked-button routerLink="/users/pending">
+          <mat-icon>how_to_reg</mat-icon>
+          View requests
+        </button>
+      </div>
+    } @else {
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Employee</th>
+              <th scope="col">Number</th>
+              <th scope="col">Department</th>
+              <th scope="col">Job title</th>
+              <th scope="col">Hire date</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of list; track item.id) {
+              <tr>
+                <!-- Name and email stacked in one cell. Six columns already
+                     push this table wide on a laptop; a seventh for the email
+                     would cost more than it's worth. -->
+                <td class="data-table__wrap">
+                  <div class="employee-cell">
+                    <span class="employee-cell__name">{{ item.firstName }} {{ item.lastName }}</span>
+                    <span class="employee-cell__email">{{ item.email }}</span>
+                  </div>
+                </td>
+                <td class="data-table__primary">{{ item.employeeNumber }}</td>
+                <td>{{ item.department }}</td>
+                <td>
+                  @if (item.jobTitle) {
+                    {{ item.jobTitle }}
+                  } @else {
+                    <span class="muted-cell">&mdash;</span>
+                  }
+                </td>
+                <!-- hireDate is a DateOnly ("yyyy-MM-dd"), which parses as UTC
+                     midnight — so it has to be FORMATTED in UTC too. Leave the
+                     timezone argument off and anyone west of Greenwich sees
+                     the day before. -->
+                <td class="data-table__numeric">{{ item.hireDate | date: 'mediumDate' : 'UTC' }}</td>
+                <td>
+                  <span
+                    class="status-badge"
+                    [class]="item.isActive ? 'status-badge--active' : 'status-badge--inactive'"
+                  >
+                    <span class="status-badge__dot" aria-hidden="true"></span>
+                    {{ item.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     }
-    <h2>Is Active: {{item.isActive }}</h2>
-    <h2>Created At: {{item.createdAt | date: 'yyyy-mm-dd'}}</h2>
-    @if (item.updatedAt !== null) {
-    <h2>Updated At: {{item.createdAt | date: 'yyyy-mm-dd'}}</h2>
-    }
-}
+  </mat-card>
+</div>

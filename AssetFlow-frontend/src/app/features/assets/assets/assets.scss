@@ -1,4 +1,54 @@
-.status-color{
-    border-radius: 25px;
-    padding: 0;
+// Assets list.
+//
+// The page shell, header, filter bar, table card, state block and status badge
+// all come from the global page chrome in app/styles/_page.scss. Only the
+// genuinely asset-specific bits live here.
+
+:host {
+  box-sizing: border-box;
+  display: block;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+// Search earns the extra room; the two selects only hold short labels, so the
+// generic auto-fit grid would give all three the same width.
+.filter-bar {
+  grid-template-columns: minmax(220px, 2.2fr) minmax(150px, 1fr) minmax(150px, 1fr);
+}
+
+.filter-bar__field {
+  // Projected prefix icon — carries this component's encapsulation attribute,
+  // unlike Material's internal prefix wrapper.
+  mat-icon[matPrefix] {
+    color: var(--af-text-subtle);
+    margin-right: 6px;
+  }
+}
+
+// Six columns of asset data need more room than the generic table before they
+// start crushing; past this the .table-scroll wrapper takes over.
+.data-table {
+  min-width: 720px;
+}
+
+@media (max-width: 900px) {
+  .filter-bar {
+    // Search takes the full first row, the two selects share the second.
+    grid-template-columns: 1fr 1fr;
+
+    .filter-bar__field--search {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .filter-bar {
+    grid-template-columns: 1fr;
+  }
 }

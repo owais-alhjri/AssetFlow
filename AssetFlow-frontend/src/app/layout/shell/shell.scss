@@ -1,30 +1,255 @@
-.home-link{
-    text-decoration: none;
-    font-weight: bold;
-    color: black;
-}
-a:hover {
-    text-decoration:none; /* Add it back on hover for clarity */
-    color: black;
-}
-.assetFlow-logo{
-    width: 50px;
-}
+// App shell — topbar above, drawer + content below.
+//
+// Layout is flex rather than `calc(100vh - 64px)`: mat-toolbar is 64px on
+// desktop but 56px below 600px, so the hardcoded subtraction was wrong on
+// every phone. Letting the container take the remaining space is correct at
+// any toolbar height, and dvh (not vh) accounts for mobile browser chrome
+// that collapses on scroll.
 
 :host {
-  display: block;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  box-sizing: border-box;
 }
 
-mat-sidenav-container {
-  // toolbar is a sibling above the container, so subtract its height
-  height: calc(100vh - 64px);
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
 }
 
-mat-sidenav {
-  width: 220px;
+// -----------------------------------------------------------------------------
+// Topbar
+// -----------------------------------------------------------------------------
+.topbar {
+  flex: 0 0 auto;
+  z-index: 2; // above the drawer, so its shadow falls onto the sidebar
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-inline: 8px 12px;
+
+  background: var(--af-surface);
+  color: var(--af-text);
+  // Hairline instead of a drop shadow: at rest the topbar should sit flush,
+  // not float above content it isn't overlapping.
+  border-bottom: 1px solid var(--af-border);
+  box-shadow: var(--af-shadow-sm);
 }
 
-.spacer {
+.topbar__spacer {
   flex: 1 1 auto;
+}
+
+.topbar__menu {
+  color: var(--af-text-muted);
+  flex-shrink: 0;
+}
+
+// Short vertical rule separating session actions from the brand/nav side.
+.topbar__divider {
+  width: 1px;
+  height: 24px;
+  margin-inline: 4px;
+  background: var(--af-border);
+  flex-shrink: 0;
+}
+
+.topbar__logout {
+  color: var(--af-text-muted);
+  border-radius: var(--af-radius-sm);
+  transition: color 140ms ease, background-color 140ms ease;
+
+  &:hover {
+    color: var(--af-error);
+    background: var(--af-error-bg);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Brand
+// -----------------------------------------------------------------------------
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px;
+  min-height: 44px; // touch target, even though it reads as text
+
+  text-decoration: none;
+  color: var(--af-text);
+  border-radius: var(--af-radius-sm);
+  transition: background-color 140ms ease;
+
+  &:hover {
+    background: color-mix(in srgb, var(--af-primary) 6%, transparent);
+  }
+
+  // Removing the focus ring is never acceptable; this replaces the browser
+  // default with one that matches the brand.
+  &:focus-visible {
+    outline: 2px solid var(--af-primary);
+    outline-offset: 2px;
+  }
+}
+
+.brand__logo {
+  // Height-constrained so the aspect ratio is preserved — the old fixed
+  // `width: 50px` sized off the wrong axis.
+  //
+  // 40px, not 32: the source is a square canvas with ~20% transparent padding
+  // baked in on every side, so the visible mark is only about two-thirds of
+  // whatever box it's given. The negative inline margin claws back the dead
+  // space on the left so the mark optically aligns with the toolbar's edge.
+  height: 40px;
+  width: auto;
+  display: block;
+  margin-inline-start: -6px;
+}
+
+.brand__name {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--af-primary);
+}
+
+// -----------------------------------------------------------------------------
+// Role chip
+// -----------------------------------------------------------------------------
+.role-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+
+  // Employee (default): neutral. Admin gets the brand tint below, so elevated
+  // privilege is visible at a glance.
+  background: color-mix(in srgb, var(--af-text-muted) 12%, transparent);
+  color: var(--af-text-muted);
+}
+
+.role-chip--admin {
+  background: color-mix(in srgb, var(--af-primary) 12%, transparent);
+  color: var(--af-primary);
+}
+
+// -----------------------------------------------------------------------------
+// Drawer + content
+// -----------------------------------------------------------------------------
+.shell {
+  flex: 1 1 auto;
+  min-height: 0; // lets the flex child actually shrink and scroll internally
+  background: var(--af-bg);
+}
+
+.sidenav {
+  width: 240px;
+  padding: 12px 0;
+  border-right: 1px solid var(--af-border);
+  background: var(--af-surface);
+}
+
+.content {
+  background: var(--af-bg);
+}
+
+// -----------------------------------------------------------------------------
+// Nav items
+// -----------------------------------------------------------------------------
+.nav__list {
+  padding-top: 0;
+}
+
+.nav {
+  // Material's list items are full-bleed; insetting them turns the active
+  // state into a pill rather than a band running edge to edge.
+  padding-inline: 8px;
+
+  a[mat-list-item] {
+    border-radius: var(--af-radius-sm);
+    margin-bottom: 4px;
+    color: var(--af-text-muted);
+    transition: background-color 140ms ease, color 140ms ease;
+
+    mat-icon[matListItemIcon] {
+      color: var(--af-text-subtle);
+      transition: color 140ms ease;
+    }
+
+    &:hover {
+      background: color-mix(in srgb, var(--af-primary) 6%, transparent);
+      color: var(--af-text);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--af-primary);
+      outline-offset: -2px;
+    }
+  }
+}
+
+// Active route. Tint + weight + a left rule — three signals, so the current
+// location survives both low-contrast displays and color-blind vision. The
+// route is also announced via aria-current="page" in the template.
+.nav__item--active {
+  position: relative;
+  background: color-mix(in srgb, var(--af-primary) 10%, transparent) !important;
+  color: var(--af-primary) !important;
+  font-weight: 600;
+
+  mat-icon[matListItemIcon] {
+    color: var(--af-primary) !important;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block: 8px;
+    inset-inline-start: 0;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--af-primary);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Small screens
+// -----------------------------------------------------------------------------
+@media (max-width: 600px) {
+  .topbar {
+    padding-inline: 4px 8px;
+    gap: 4px;
+  }
+
+  .brand__name {
+    // The logo carries the mark; the wordmark is the first thing to go when
+    // the toolbar gets tight.
+    display: none;
+  }
+
+  // Icon-only logout would fail the "no icon-only controls without a label"
+  // rule, so the label stays and the divider goes instead.
+  .topbar__divider {
+    display: none;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Motion
+// -----------------------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .brand,
+  .topbar__logout,
+  .nav a[mat-list-item],
+  .nav a[mat-list-item] mat-icon[matListItemIcon] {
+    transition: none;
+  }
 }

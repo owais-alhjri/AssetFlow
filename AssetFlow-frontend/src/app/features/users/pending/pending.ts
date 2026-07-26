@@ -4,10 +4,15 @@ import { PendingUser } from '../../../shared/models/user.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ApproveDialog } from '../../../shared/components/approve-dialog/approve-dialog';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
+import { DatePipe } from '@angular/common';
+import { MatCard } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-pending',
-  imports: [],
+  imports: [DatePipe, MatCard, MatIconModule, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './pending.html',
   styleUrl: './pending.scss',
 })

@@ -2,11 +2,23 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Employee } from '../../../shared/models/employee.model';
 import { EmployeesServices } from '../../../core/services/employeesServices';
 import { DatePipe } from '@angular/common';
+import { MatCard } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-employees',
   standalone: true,
-  imports: [DatePipe],
+  imports: [
+    DatePipe,
+    MatCard,
+    MatIconModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    RouterLink,
+  ],
   templateUrl: './employees.html',
   styleUrl: './employees.scss',
 })

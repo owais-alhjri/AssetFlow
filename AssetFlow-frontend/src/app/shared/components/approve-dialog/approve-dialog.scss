@@ -1,0 +1,19 @@
+// Approve dialog — collects the employee record created when an admin
+// approves a pending registration. Shared dialog chrome (title, two-column
+// field grid, actions) comes from _form-dialog.scss.
+//
+// Nothing else is needed here: six fields divide into three even rows in the
+// shared two-column grid, so no field needs to span and no row is left with a
+// lone item.
+@use '../../../styles/form-dialog';
+
+:host {
+  display: block;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}

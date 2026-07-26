@@ -1,0 +1,58 @@
+// Asset form dialog — one component for both create and edit; mode is decided
+// by whether an asset arrives via MAT_DIALOG_DATA. Shared dialog chrome
+// (title, two-column field grid, actions) comes from _form-dialog.scss.
+@use '../../../styles/form-dialog';
+
+:host {
+  display: block;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+// Eleven fields is a tall dialog. Material caps content at 65vh and scrolls,
+// so the actions row stays reachable — but cap it a little tighter here so
+// there's a visible sliver of the next row cueing that the list continues.
+mat-dialog-content {
+  max-height: min(60vh, 520px);
+}
+
+// Notes is free text and the last field — full width so it doesn't sit as a
+// lone half-width box in the final row.
+mat-dialog-content mat-form-field:last-of-type {
+  grid-column: 1 / -1;
+}
+
+// Disabled fields in edit mode. Six of these (tag, serial, category, purchase
+// date, price, currency) are create-only, so in edit mode a third of the form
+// is inert — it needs to read as deliberately locked rather than broken.
+// Material's default is a faint dashed underline that's easy to miss.
+//
+// ::ng-deep is required, not laziness: .mat-mdc-text-field-wrapper lives
+// inside MatFormField's OWN template, so it carries that component's
+// _ngcontent attribute. A plain descendant selector compiles to
+// `.mat-mdc-text-field-wrapper[_ngcontent-mine]`, which matches nothing.
+// Anchoring on :host keeps the pierce scoped to this dialog.
+:host ::ng-deep mat-form-field.mat-form-field-disabled {
+  .mat-mdc-text-field-wrapper {
+    background: color-mix(in srgb, var(--af-text-muted) 6%, transparent);
+    border-radius: var(--af-radius-sm) var(--af-radius-sm) 0 0;
+  }
+
+  // Still above the 4.5:1 floor: disabled doesn't mean unreadable, and these
+  // fields carry the values the user is editing around.
+  .mat-mdc-input-element {
+    color: var(--af-text-muted);
+    -webkit-text-fill-color: var(--af-text-muted);
+  }
+}
+
+@media (max-width: 700px) {
+  mat-dialog-content mat-form-field:last-of-type {
+    grid-column: auto;
+  }
+}

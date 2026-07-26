@@ -1,17 +1,100 @@
-@if (loading()) {
-  <p>Loading…</p>
-} @else if (errorMessage()) {
-  <p class="error-message">{{ errorMessage() }}</p>
-} @else {
-  @for (user of users(); track user.id) {
-    <div class="request-row">
-      <h3>{{ user.email }}</h3>
-      <h5>{{ user.status }}</h5>
-      <p>{{ user.requestedAt }}</p>
-      <button (click)="approveUser(user.id)">Approve</button>
-      <button (click)="rejectUser(user.id)">Reject</button>
+<div class="page">
+  <header class="page-header">
+    <div class="page-header__text">
+      <h1 class="page-header__title">Requests</h1>
+      <p class="page-header__meta">
+        {{ users().length }} {{ users().length === 1 ? 'request' : 'requests' }} awaiting review
+      </p>
     </div>
-  } @empty {
-    <p class="empty-state">No pending requests.</p>
-  }
-}
+  </header>
+
+  <mat-card class="table-card" appearance="outlined">
+    @if (loading()) {
+      <div class="state" aria-live="polite">
+        <mat-spinner diameter="36" />
+        <p class="state__message">Loading requests...</p>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="state state--error" role="alert">
+        <mat-icon class="state__icon">error_outline</mat-icon>
+        <p class="state__message">{{ errorMessage() }}</p>
+        <button mat-stroked-button (click)="loadPendingUsers()">
+          <mat-icon>refresh</mat-icon>
+          Retry
+        </button>
+      </div>
+    } @else if (users().length === 0) {
+      <!-- An empty queue is the good outcome here, not a gap to fill — so this
+           state reassures rather than prompting an action. -->
+      <div class="state">
+        <mat-icon class="state__icon state__icon--ok">task_alt</mat-icon>
+        <p class="state__title">All caught up</p>
+        <p class="state__message">
+          There are no registration requests waiting for review.
+        </p>
+      </div>
+    } @else {
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Email</th>
+              <th scope="col">Status</th>
+              <th scope="col">Requested</th>
+              <th scope="col" class="data-table__actions-head">
+                <span class="visually-hidden">Actions</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user.id) {
+              <tr>
+                <td class="data-table__primary">{{ user.email }}</td>
+                <td>
+                  <span class="status-badge" [class]="'status-badge--' + user.status.toLowerCase()">
+                    <span class="status-badge__dot" aria-hidden="true"></span>
+                    {{ user.status }}
+                  </span>
+                </td>
+                <!-- requestedAt is a full DateTime, so it renders in local time
+                     (unlike the DateOnly hire date on the employees page,
+                     which has to be forced to UTC). -->
+                <td class="data-table__numeric">{{ user.requestedAt | date: 'medium' }}</td>
+                <td class="data-table__actions">
+                  <!-- Flex lives on an inner div, not the <td>. Setting
+                       display:flex on a table cell drops its table-cell box,
+                       and browsers disagree about how to fix that up — the
+                       cell can stop tracking its column. -->
+                  <div class="request-actions">
+                    <!-- Approve is the affirmative path and carries the fill;
+                         Reject is destructive, so it stays outlined and only
+                         reddens on intent. Both are labelled, not icon-only —
+                         approving the wrong account isn't undoable from here. -->
+                    <button
+                      mat-flat-button
+                      class="request-actions__approve"
+                      (click)="approveUser(user.id)"
+                      [attr.aria-label]="'Approve ' + user.email"
+                    >
+                      <mat-icon>check</mat-icon>
+                      Approve
+                    </button>
+                    <button
+                      mat-stroked-button
+                      class="request-actions__reject"
+                      (click)="rejectUser(user.id)"
+                      [attr.aria-label]="'Reject ' + user.email"
+                    >
+                      <mat-icon>close</mat-icon>
+                      Reject
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </mat-card>
+</div>

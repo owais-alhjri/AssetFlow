@@ -1,0 +1,53 @@
+// Employees list. Page shell, table card, state block and status badge all
+// come from the global page chrome in app/styles/_page.scss.
+
+:host {
+  box-sizing: border-box;
+  display: block;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+// Six columns of employee data need room before they start crushing; past
+// this the .table-scroll wrapper takes over.
+.data-table {
+  min-width: 820px;
+}
+
+// Name over email in a single cell. The email is the quieter of the two — it's
+// there for identification, not scanning — so it drops a step in both size and
+// contrast while staying above the 4.5:1 floor.
+.employee-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.employee-cell__name {
+  font-weight: 600;
+  color: var(--af-text);
+  line-height: 1.3;
+}
+
+.employee-cell__email {
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  color: var(--af-text-muted);
+  // Long addresses truncate rather than forcing the column wider.
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 26ch;
+}
+
+// Placeholder for an absent optional value. Muted, but the em dash is a real
+// character so screen readers announce something rather than skipping a
+// silently empty cell.
+.muted-cell {
+  color: var(--af-text-subtle);
+}

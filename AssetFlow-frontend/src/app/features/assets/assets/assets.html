@@ -1,24 +1,37 @@
-<div>
-  <mat-card>
-    <mat-card-content>
-      <mat-card-header>
-        <mat-card-title>Assets</mat-card-title>
-        <mat-card-subtitle>{{ totalAssets() }} assets</mat-card-subtitle>
-        @if(isAdmin()){
-        <button mat-flat-button (click)="openAssetDialog()" >+ Add Asset</button>
-        }
-      </mat-card-header>
-    </mat-card-content>
-  </mat-card>
+<div class="page">
+  <!-- Page header. Not a mat-card: a card implies a content surface, and a page
+       title isn't one. Plain header + the two cards below reads as a clearer
+       hierarchy than three stacked cards of equal weight. -->
+  <header class="page-header">
+    <div class="page-header__text">
+      <h1 class="page-header__title">Assets</h1>
+      <p class="page-header__meta">
+        {{ totalAssets() }} {{ totalAssets() === 1 ? 'asset' : 'assets' }}
+      </p>
+    </div>
 
-  <mat-card>
-    <!-- Always visible: search must NOT be inside the loading guard -->
-    <mat-form-field appearance="fill">
-      <mat-label>Search Box</mat-label>
-      <input matInput [formControl]="searchControl" placeholder="Name or Tag..." />
+    @if (isAdmin()) {
+      <button mat-flat-button class="page-header__action" (click)="openAssetDialog()">
+        <mat-icon>add</mat-icon>
+        Add Asset
+      </button>
+    }
+  </header>
+
+  <!-- Filter bar. Always visible: search must NOT be inside the loading guard,
+       or the field unmounts mid-type on every debounced reload. -->
+  <mat-card class="filter-bar" appearance="outlined">
+    <mat-form-field
+      class="filter-bar__field filter-bar__field--search"
+      appearance="outline"
+      subscriptSizing="dynamic"
+    >
+      <mat-label>Search</mat-label>
       <mat-icon matPrefix>search</mat-icon>
+      <input matInput [formControl]="searchControl" placeholder="Name or tag..." />
     </mat-form-field>
-    <mat-form-field appearance="fill">
+
+    <mat-form-field class="filter-bar__field" appearance="outline" subscriptSizing="dynamic">
       <mat-label>Status</mat-label>
       <mat-select [formControl]="statusControl">
         <mat-option [value]="undefined">All</mat-option>
@@ -27,67 +40,140 @@
         <mat-option [value]="'Retired'">Retired</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field>
-      <mat-label>Category</mat-label>
 
+    <mat-form-field class="filter-bar__field" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Category</mat-label>
       <mat-select [formControl]="categoryControl">
         <mat-option [value]="undefined">All</mat-option>
         @for (category of categories(); track category.id) {
-          <mat-option [value]="category.id">{{ category.name }} </mat-option>
+          <mat-option [value]="category.id">{{ category.name }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
+  </mat-card>
 
+  <mat-card class="table-card" appearance="outlined">
+    <!-- Four distinct states: loading → error → empty → table. Each owns a
+         min-height so the card doesn't resize as they swap (CLS). -->
     @if (isLoading()) {
-      <p>Loading...</p>
+      <div class="state" aria-live="polite">
+        <mat-spinner diameter="36" />
+        <p class="state__message">Loading assets...</p>
+      </div>
     } @else if (errorMessage()) {
-      <p>{{ errorMessage() }}</p>
-    } @else {
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">Tag</th>
-            <th scope="col">Name</th>
-            <th scope="col">Category</th>
-            <th scope="col">Status</th>
-            <th scope="col">Condition</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (asset of assets(); track asset.id) {
-            <tr>
-              <td>{{ asset.tag }}</td>
-              <td>{{ asset.name }}</td>
-              <td>{{ asset.categoryName }}</td>
-              <td class="status-color" [style.background-color]="color(asset.statusName)">
-                {{ asset.statusName }}
-              </td>
-              <td>{{ asset.condition }}</td>
-              <td>
-                <button mat-icon-button [routerLink]="['/assets', asset.id]" ><mat-icon>visibility</mat-icon></button>
-                @if (isAdmin()) {
-                <button mat-icon-button (click)="openAssetDialog(asset)"  ><mat-icon>edit</mat-icon></button>
-                <button mat-icon-button (click)="deleteAsset(asset)"><mat-icon>delete</mat-icon></button>
-                }
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="5">No assets available..</td>
-            </tr>
+      <div class="state state--error" role="alert">
+        <mat-icon class="state__icon">error_outline</mat-icon>
+        <p class="state__message">{{ errorMessage() }}</p>
+        <button mat-stroked-button (click)="loadAssets()">
+          <mat-icon>refresh</mat-icon>
+          Retry
+        </button>
+      </div>
+    } @else if (assets().length === 0) {
+      <div class="state">
+        <mat-icon class="state__icon">inventory_2</mat-icon>
+        <!-- Distinguish "nothing exists" from "nothing matched" — the recovery
+             action is different for each. -->
+        @if (search() || status() || categoryId()) {
+          <p class="state__title">No matching assets</p>
+          <p class="state__message">Try a different search term or clear the filters above.</p>
+        } @else {
+          <p class="state__title">No assets yet</p>
+          <p class="state__message">
+            @if (isAdmin()) {
+              Add your first asset to start tracking it.
+            } @else {
+              Assets will appear here once an administrator adds them.
+            }
+          </p>
+          @if (isAdmin()) {
+            <button mat-flat-button (click)="openAssetDialog()">
+              <mat-icon>add</mat-icon>
+              Add Asset
+            </button>
           }
-        </tbody>
-      </table>
+        }
+      </div>
+    } @else {
+      <!-- Wrapper scrolls horizontally so a wide table never widens the page. -->
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Tag</th>
+              <th scope="col">Name</th>
+              <th scope="col">Category</th>
+              <th scope="col">Status</th>
+              <th scope="col">Condition</th>
+              <th scope="col" class="data-table__actions-head">
+                <span class="visually-hidden">Actions</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (asset of assets(); track asset.id) {
+              <tr>
+                <td class="data-table__primary">{{ asset.tag }}</td>
+                <td class="data-table__wrap">{{ asset.name }}</td>
+                <td>{{ asset.categoryName }}</td>
+                <td>
+                  <!-- Class-driven, not an inline background: the color lives
+                       in the token layer so it stays consistent everywhere the
+                       badge is reused. -->
+                  <span class="status-badge" [class]="'status-badge--' + asset.statusName.toLowerCase()">
+                    <span class="status-badge__dot" aria-hidden="true"></span>
+                    {{ asset.statusName }}
+                  </span>
+                </td>
+                <td>{{ asset.condition }}</td>
+                <td class="data-table__actions">
+                  <button
+                    mat-icon-button
+                    [routerLink]="['/assets', asset.id]"
+                    [attr.aria-label]="'View ' + asset.tag"
+                    [matTooltip]="'View details'"
+                  >
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                  @if (isAdmin()) {
+                    <button
+                      mat-icon-button
+                      (click)="openAssetDialog(asset)"
+                      [attr.aria-label]="'Edit ' + asset.tag"
+                      matTooltip="Edit"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      class="data-table__delete"
+                      (click)="deleteAsset(asset)"
+                      [attr.aria-label]="'Delete ' + asset.tag"
+                      matTooltip="Delete"
+                    >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     }
 
-    <!-- Paginator outside the table, and ideally outside the loading guard -->
-    <mat-paginator
-      [length]="totalAssets()"
-      [pageSize]="pageSize()"
-      (page)="onPageChange($event)"
-      [pageSizeOptions]="[5, 10, 20, 25]"
-      showFirstLastButtons
-    />
+    <!-- Paginator sits outside the state guard and stays mounted while loading,
+         so the card doesn't jump as rows swap in. Hidden only when there is
+         genuinely nothing to page through. -->
+    @if (totalAssets() > 0 && !errorMessage()) {
+      <mat-paginator
+        class="table-card__paginator"
+        [length]="totalAssets()"
+        [pageSize]="pageSize()"
+        (page)="onPageChange($event)"
+        [pageSizeOptions]="[5, 10, 20, 25]"
+        showFirstLastButtons
+      />
+    }
   </mat-card>
 </div>

@@ -1,0 +1,417 @@
+// =============================================================================
+// Shared page chrome — the layout vocabulary every list page is built from.
+//
+// These are GLOBAL on purpose (loaded from styles.scss, outside any component's
+// view encapsulation). Three list pages need the same header, table card and
+// state block; a Sass partial @use'd per-component would compile a fresh copy
+// into each one and let them drift independently. One source, one output.
+//
+// Component stylesheets can still override any of it: Angular appends a
+// _ngcontent attribute to component rules, so they outrank these on
+// specificity without needing !important.
+//
+// SPECIFICITY CONVENTION — read before adding a rule here.
+// Any class that lands on a Material host element (mat-card, mat-icon,
+// mat-form-field, mat-paginator, a mat-* button) MUST be written as
+// `element.class`, not a bare `.class`. Material's own rules are (0,1,0) and
+// its component styles are injected into <head> at RUNTIME, i.e. after this
+// stylesheet — so a bare class ties on specificity and loses on source order.
+// This is invisible in the component-scoped case, where the _ngcontent
+// attribute quietly wins the tie for you.
+//
+// Vocabulary:
+//   .page              page shell (gutter, measure, vertical rhythm)
+//   .page-header       title + count + primary action
+//   .filter-bar        card of filter controls
+//   .table-card        surface holding a table and its paginator
+//   .data-table        the table itself
+//   .state             loading / error / empty block
+//   .status-badge      pill for any entity's status
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Page shell
+// -----------------------------------------------------------------------------
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  // Dense admin views: modest gutter, and a capped measure so tables don't
+  // stretch to absurd widths on 1440+.
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+// -----------------------------------------------------------------------------
+// Header
+// -----------------------------------------------------------------------------
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+
+.page-header__text {
+  min-width: 0;
+}
+
+.page-header__title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--af-text);
+}
+
+.page-header__meta {
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+  color: var(--af-text-muted);
+  // The count changes as you page and filter; tabular figures stop it jittering.
+  font-variant-numeric: tabular-nums;
+}
+
+button.page-header__action {
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--af-radius-sm);
+  font-weight: 600;
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--af-shadow-md);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Filter bar
+// -----------------------------------------------------------------------------
+mat-card.filter-bar {
+  display: grid;
+  // Generic default; pages with a known field mix override the ratio locally.
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: center;
+  gap: 12px;
+
+  padding: 16px;
+  border: 1px solid var(--af-border);
+  border-radius: var(--af-radius-md);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-sm);
+}
+
+mat-form-field.filter-bar__field {
+  width: 100%;
+}
+
+// -----------------------------------------------------------------------------
+// Table card
+// -----------------------------------------------------------------------------
+mat-card.table-card {
+  padding: 0;        // the table draws its own edge-to-edge padding
+  overflow: hidden;  // clips the first/last row to the card radius
+  border: 1px solid var(--af-border);
+  border-radius: var(--af-radius-md);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-md);
+}
+
+// The padded counterpart to .table-card, for cards holding ordinary content
+// rather than an edge-to-edge table.
+mat-card.surface-card {
+  padding: 20px 24px;
+  border: 1px solid var(--af-border);
+  border-radius: var(--af-radius-md);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-md);
+}
+
+@media (max-width: 600px) {
+  mat-card.surface-card {
+    padding: 16px;
+  }
+}
+
+.table-scroll {
+  // Only the table scrolls sideways — the page itself never does.
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+
+  th,
+  td {
+    text-align: left;
+    padding: 12px 16px;
+    vertical-align: middle;
+  }
+
+  thead th {
+    // Quiet, small, wide-tracked — the header should recede behind the data.
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--af-text-muted);
+    white-space: nowrap;
+
+    background: color-mix(in srgb, var(--af-bg) 60%, var(--af-surface));
+    border-bottom: 1px solid var(--af-border);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--af-border);
+    transition: background-color 140ms ease;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: color-mix(in srgb, var(--af-primary) 4%, var(--af-surface));
+    }
+  }
+
+  tbody td {
+    color: var(--af-text);
+  }
+}
+
+// The identifying column — tag, employee number, email.
+.data-table__primary {
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+// The one column allowed to wrap; everything else stays on a single line.
+.data-table__wrap {
+  min-width: 180px;
+}
+
+// Dates and counts: fixed-width figures so the column stays in a straight line.
+.data-table__numeric {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--af-text-muted);
+}
+
+.data-table__actions-head,
+.data-table__actions {
+  text-align: right;
+  white-space: nowrap;
+  width: 1%; // shrink-to-fit, handing the leftover width to the wrapping column
+}
+
+.data-table__actions {
+  padding-right: 8px;
+
+  button {
+    color: var(--af-text-muted);
+    transition: color 140ms ease;
+
+    &:hover {
+      color: var(--af-primary);
+    }
+  }
+}
+
+// Destructive actions tint apart from their neighbors only on intent — a
+// permanently red icon in every row reads as an error state.
+//
+// Scoped through .data-table__actions deliberately: the generic hover above
+// is `.data-table__actions button:hover` (0,2,1), so a bare
+// `.data-table__delete:hover` (0,2,0) would lose to it and hover blue.
+.data-table__actions button.data-table__delete:hover {
+  color: var(--af-error);
+}
+
+mat-paginator.table-card__paginator {
+  border-top: 1px solid var(--af-border);
+  background: var(--af-surface);
+}
+
+// -----------------------------------------------------------------------------
+// Loading / error / empty
+//
+// One shared block so all three land at the same size — the card holds its
+// height as they swap and nothing below it jumps.
+// -----------------------------------------------------------------------------
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+
+  min-height: 280px;
+  padding: 48px 24px;
+}
+
+// Element + class (0,1,1) rather than a bare class. Material's own
+// `.mat-icon` rule is (0,1,0) and gets injected into <head> at runtime, i.e.
+// AFTER this stylesheet — so a bare `.state__icon` ties on specificity and
+// loses on source order, leaving the box at Material's 24px.
+//
+// line-height has to be pinned too: `.mat-icon` sets a fixed box plus
+// overflow:hidden but no line-height of its own, so it inherits body's
+// (sized for 14px text). Scale the glyph without pinning it and the icon is
+// laid out on a too-short line box and clipped.
+mat-icon.state__icon {
+  width: 40px;
+  height: 40px;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--af-text-subtle);
+}
+
+.state__title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--af-text);
+}
+
+.state__message {
+  margin: 0;
+  max-width: 40ch; // keeps the sentence inside a comfortable measure
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--af-text-muted);
+}
+
+.state--error {
+  mat-icon.state__icon {
+    color: var(--af-error);
+  }
+
+  .state__message {
+    color: var(--af-error);
+    font-weight: 500;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Status badge
+//
+// The label always carries the meaning; color is reinforcement, never the sole
+// signal. Every bg/ink pair is >= 4.5:1 (see _theme.scss for why the ink is
+// not the solid status color).
+// -----------------------------------------------------------------------------
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 4px 10px;
+  border-radius: 999px;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+
+  // Fallback for a status added later with no rule yet — still renders as a
+  // legible neutral pill rather than unstyled text.
+  background: var(--af-status-retired-bg);
+  color: var(--af-status-retired-ink);
+}
+
+.status-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.status-badge--available { background: var(--af-status-available-bg); color: var(--af-status-available-ink); }
+.status-badge--assigned  { background: var(--af-status-assigned-bg);  color: var(--af-status-assigned-ink); }
+.status-badge--retired   { background: var(--af-status-retired-bg);   color: var(--af-status-retired-ink); }
+.status-badge--active    { background: var(--af-status-active-bg);    color: var(--af-status-active-ink); }
+.status-badge--inactive  { background: var(--af-status-inactive-bg);  color: var(--af-status-inactive-ink); }
+.status-badge--pending   { background: var(--af-status-pending-bg);   color: var(--af-status-pending-ink); }
+
+// -----------------------------------------------------------------------------
+// Utility
+// -----------------------------------------------------------------------------
+// Screen-reader-only. For things that need an accessible name but would be
+// visual noise if drawn — an actions column header, for instance.
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// -----------------------------------------------------------------------------
+// Small screens
+// -----------------------------------------------------------------------------
+@media (max-width: 600px) {
+  .page {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+  }
+
+  .page-header__title {
+    font-size: 1.5rem;
+  }
+
+  button.page-header__action {
+    width: 100%;
+  }
+
+  mat-card.filter-bar {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .state {
+    min-height: 220px;
+    padding: 40px 20px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Motion
+// -----------------------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  button.page-header__action,
+  .data-table tbody tr,
+  .data-table__actions button {
+    transition: none;
+  }
+
+  button.page-header__action:hover:not(:disabled) {
+    transform: none;
+  }
+}

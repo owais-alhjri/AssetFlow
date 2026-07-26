@@ -1,0 +1,155 @@
+// Asset detail. Page shell, surface cards, state block and status badge come
+// from the global page chrome in app/styles/_page.scss.
+
+:host {
+  box-sizing: border-box;
+  display: block;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+// -----------------------------------------------------------------------------
+// Back link
+// -----------------------------------------------------------------------------
+// Sits above the title rather than beside it: on a detail page the escape
+// route should be the first thing in the reading order, not something to hunt
+// for on the right.
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  align-self: flex-start; // don't stretch across the .page flex column
+  margin-bottom: -8px;    // pull the header up; the 20px page gap is too much here
+  padding: 6px 10px 6px 6px;
+  min-height: 44px;
+
+  color: var(--af-text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--af-radius-sm);
+  transition: color 140ms ease, background-color 140ms ease;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    // .mat-icon has overflow:hidden and no line-height of its own — see the
+    // note in _page.scss. Pin it or the glyph gets clipped.
+    line-height: 1;
+  }
+
+  &:hover {
+    color: var(--af-primary);
+    background: color-mix(in srgb, var(--af-primary) 6%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--af-primary);
+    outline-offset: 2px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Sections
+// -----------------------------------------------------------------------------
+.section-title {
+  margin: 0 0 16px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--af-text-muted);
+}
+
+// -----------------------------------------------------------------------------
+// Field/value pairs
+// -----------------------------------------------------------------------------
+.detail-grid {
+  margin: 0;
+  display: grid;
+  // auto-fit rather than a fixed column count: the Identification card has
+  // four pairs and Purchase has five, and both should breathe at any width
+  // without each card hard-coding its own layout.
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px 24px;
+}
+
+.detail-item {
+  min-width: 0; // lets long values truncate instead of widening the column
+}
+
+.detail-item__label {
+  margin: 0 0 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--af-text-muted);
+}
+
+.detail-item__value {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--af-text);
+  // Serial numbers and locations can be long and unbroken; wrap rather than
+  // pushing the grid sideways.
+  overflow-wrap: anywhere;
+}
+
+// Identifiers and money: fixed-width figures so digits line up between rows
+// and a 6 can't be mistaken for an 8 at a glance.
+.detail-item__value--mono {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  font-weight: 600;
+}
+
+// An absent optional value. Muted and italic so it reads as "nothing here"
+// rather than as the value itself.
+.detail-item__empty {
+  color: var(--af-text-subtle);
+  font-style: italic;
+}
+
+// -----------------------------------------------------------------------------
+// Notes
+// -----------------------------------------------------------------------------
+.notes {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--af-text);
+  // Free text is the one field here that benefits from a reading measure.
+  max-width: 70ch;
+  // Preserve the author's line breaks without collapsing runs of whitespace
+  // into an unreadable block.
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.notes--empty {
+  color: var(--af-text-subtle);
+  font-style: italic;
+}
+
+// -----------------------------------------------------------------------------
+// Record metadata
+// -----------------------------------------------------------------------------
+.record-meta {
+  margin: 0;
+  padding-inline: 4px;
+  font-size: 0.8125rem;
+  color: var(--af-text-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-link {
+    transition: none;
+  }
+}

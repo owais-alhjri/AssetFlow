@@ -1,0 +1,52 @@
+// Confirm dialog — one component behind every destructive confirm in the app
+// (delete asset, reject user), parameterised by { title, message }.
+//
+// Everything here is component-scoped, so Angular's _ngcontent attribute wins
+// the specificity tie against Material's own .mat-mdc-dialog-* rules. Global
+// rules would need `element.class` selectors instead — see _page.scss.
+
+:host {
+  display: block;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+[mat-dialog-title] {
+  margin: 0;
+  padding: 24px 24px 8px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--af-text);
+}
+
+mat-dialog-content {
+  padding: 0 24px 8px;
+
+  p {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    // Muted against the title so the question reads as supporting detail, but
+    // still well clear of the 4.5:1 floor.
+    color: var(--af-text-muted);
+    max-width: 48ch;
+  }
+}
+
+mat-dialog-actions {
+  gap: 8px;
+  padding: 8px 24px 20px;
+
+  button {
+    min-height: 44px;
+    border-radius: var(--af-radius-sm);
+    font-weight: 600;
+  }
+}

@@ -1,33 +1,150 @@
-<h2>Name: {{ asset()?.name }}</h2>
-<h2>Tag: {{ asset()?.tag }}</h2>
-<h2>Serial Number: {{ asset()?.serialNumber }}</h2>
-<h2>Category Name: {{ asset()?.categoryName }}</h2>
-<h2>Condition: {{ asset()?.condition }}</h2>
-<h2>Status: {{ asset()?.statusName }}</h2>
-<h2>Purchase Price: {{ asset()?.purchasePrice }} {{ asset()?.currency }}</h2>
-<h2>Purchase Date: {{ asset()?.purchaseDate }}</h2>
+<div class="page">
+  <a class="back-link" routerLink="/assets">
+    <mat-icon>arrow_back</mat-icon>
+    Assets
+  </a>
 
-@if (asset()?.warrantyExpiryDate !== null) {
-  <h2>Warranty Expiry Date: {{ asset()?.warrantyExpiryDate }}</h2>
-} @else {
-  <h2>Warranty Expiry Date: No warranty</h2>
-}
-@if (asset()?.nextMaintenanceDate !== null) {
-  <h2>Next Maintenance Date: {{ asset()?.nextMaintenanceDate }}</h2>
-} @else {
-  <h2>Next Maintenance Date: No next maintenance</h2>
-}
-@if (asset()?.location !== null) {
-  <h2>Location: {{ asset()?.location }}</h2>
-} @else {
-  <h2>Location: No location is provided</h2>
-}
-@if (asset()?.notes !== null) {
-  <h2>Notes: {{ asset()?.notes }}</h2>
-} @else {
-  <h2>Notes: No Notes is provided</h2>
-}
-<h2>created Date: {{ asset()?.createdAt | date: 'yyyy-MM-dd' }}</h2>
-@if(asset()?.updatedAt !== null){
-    <h2>Updated Date: {{ asset()?.updatedAt| date: 'yyyy-MM-dd' }}</h2>
-}
+  @if (isLoading()) {
+    <mat-card class="surface-card" appearance="outlined">
+      <div class="state" aria-live="polite">
+        <mat-spinner diameter="36" />
+        <p class="state__message">Loading asset...</p>
+      </div>
+    </mat-card>
+  } @else if (notFound()) {
+    <mat-card class="surface-card" appearance="outlined">
+      <div class="state">
+        <mat-icon class="state__icon">search_off</mat-icon>
+        <p class="state__title">Asset not found</p>
+        <!-- No retry here: retrying a deleted or mistyped id just fails again.
+             The only useful move is back to the list. -->
+        <p class="state__message">
+          This asset may have been deleted, or the link may be incorrect.
+        </p>
+        <button mat-stroked-button routerLink="/assets">
+          <mat-icon>arrow_back</mat-icon>
+          Back to assets
+        </button>
+      </div>
+    </mat-card>
+  } @else if (errorMessage()) {
+    <mat-card class="surface-card" appearance="outlined">
+      <div class="state state--error" role="alert">
+        <mat-icon class="state__icon">error_outline</mat-icon>
+        <p class="state__message">{{ errorMessage() }}</p>
+        <button mat-stroked-button (click)="loadAssetById()">
+          <mat-icon>refresh</mat-icon>
+          Retry
+        </button>
+      </div>
+    </mat-card>
+  } @else if (asset(); as a) {
+    <header class="page-header">
+      <div class="page-header__text">
+        <h1 class="page-header__title">{{ a.name }}</h1>
+        <p class="page-header__meta">{{ a.tag }} &middot; {{ a.categoryName }}</p>
+      </div>
+
+      <span class="status-badge" [class]="'status-badge--' + a.statusName.toLowerCase()">
+        <span class="status-badge__dot" aria-hidden="true"></span>
+        {{ a.statusName }}
+      </span>
+    </header>
+
+    <mat-card class="surface-card" appearance="outlined">
+      <h2 class="section-title">Identification</h2>
+      <!-- A description list, not a table: this is one record's field/value
+           pairs, which is exactly what <dl> describes. Screen readers announce
+           the pairing; a grid of divs wouldn't. -->
+      <dl class="detail-grid">
+        <div class="detail-item">
+          <dt class="detail-item__label">Asset tag</dt>
+          <dd class="detail-item__value detail-item__value--mono">{{ a.tag }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt class="detail-item__label">Serial number</dt>
+          <dd class="detail-item__value detail-item__value--mono">{{ a.serialNumber }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt class="detail-item__label">Category</dt>
+          <dd class="detail-item__value">{{ a.categoryName }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt class="detail-item__label">Condition</dt>
+          <dd class="detail-item__value">{{ a.condition }}</dd>
+        </div>
+      </dl>
+    </mat-card>
+
+    <mat-card class="surface-card" appearance="outlined">
+      <h2 class="section-title">Purchase &amp; lifecycle</h2>
+      <dl class="detail-grid">
+        <div class="detail-item">
+          <dt class="detail-item__label">Purchase price</dt>
+          <dd class="detail-item__value detail-item__value--mono">
+            {{ a.purchasePrice | number: '1.2-2' }} {{ a.currency }}
+          </dd>
+        </div>
+        <!-- purchaseDate / warranty / maintenance are DateOnly values, which
+             parse as UTC midnight — so they must be FORMATTED in UTC too, or
+             they render a day early west of Greenwich. createdAt below is a
+             real DateTime and correctly stays local. -->
+        <div class="detail-item">
+          <dt class="detail-item__label">Purchase date</dt>
+          <dd class="detail-item__value">{{ a.purchaseDate | date: 'mediumDate' : 'UTC' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt class="detail-item__label">Warranty expiry</dt>
+          <dd class="detail-item__value">
+            <!-- Truthiness, not `!== null`: these fields are optional, so an
+                 absent one can arrive as undefined or "" and a null check
+                 alone would print an empty value instead of the fallback. -->
+            @if (a.warrantyExpiryDate) {
+              {{ a.warrantyExpiryDate | date: 'mediumDate' : 'UTC' }}
+            } @else {
+              <span class="detail-item__empty">No warranty</span>
+            }
+          </dd>
+        </div>
+        <div class="detail-item">
+          <dt class="detail-item__label">Next maintenance</dt>
+          <dd class="detail-item__value">
+            @if (a.nextMaintenanceDate) {
+              {{ a.nextMaintenanceDate | date: 'mediumDate' : 'UTC' }}
+            } @else {
+              <span class="detail-item__empty">Not scheduled</span>
+            }
+          </dd>
+        </div>
+        <div class="detail-item">
+          <dt class="detail-item__label">Location</dt>
+          <dd class="detail-item__value">
+            @if (a.location) {
+              {{ a.location }}
+            } @else {
+              <span class="detail-item__empty">Not specified</span>
+            }
+          </dd>
+        </div>
+      </dl>
+    </mat-card>
+
+    <mat-card class="surface-card" appearance="outlined">
+      <h2 class="section-title">Notes</h2>
+      @if (a.notes) {
+        <p class="notes">{{ a.notes }}</p>
+      } @else {
+        <p class="notes notes--empty">No notes have been added for this asset.</p>
+      }
+    </mat-card>
+
+    <!-- Record metadata is provenance, not content — it gets a quiet footer
+         line rather than a card of its own. -->
+    <p class="record-meta">
+      Created {{ a.createdAt | date: 'medium' }}
+      @if (a.updatedAt) {
+        &middot; last updated {{ a.updatedAt | date: 'medium' }}
+      }
+    </p>
+  }
+</div>

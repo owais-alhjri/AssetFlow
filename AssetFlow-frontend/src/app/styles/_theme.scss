@@ -101,6 +101,28 @@ $af-tertiary-palette: map.merge(map.get($_palettes, tertiary), $_rest);
   --af-status-assigned:  var(--af-accent);
   --af-status-retired:   #64748b;
 
+  // Badge pairs: a pale tint to sit on, and a darkened ink to write with.
+  // The ink is NOT the solid status color above — that lands around 3:1 on its
+  // own tint, under the 4.5:1 body-text floor. These pairs are all >= 4.6:1.
+  --af-status-available-bg:  #dcfce7;
+  --af-status-available-ink: #15803d;
+  --af-status-assigned-bg:   #ccfbf1;
+  --af-status-assigned-ink:  #0f766e;
+  --af-status-retired-bg:    #e2e8f0;
+  --af-status-retired-ink:   #475569;
+
+  // Same badge component, other entities. Active/inactive alias the asset
+  // pairs deliberately — "on" and "off" should look the same everywhere in
+  // the app regardless of what's being described.
+  --af-status-active-bg:     var(--af-status-available-bg);
+  --af-status-active-ink:    var(--af-status-available-ink);
+  --af-status-inactive-bg:   var(--af-status-retired-bg);
+  --af-status-inactive-ink:  var(--af-status-retired-ink);
+  // Amber-700 rather than --af-warning: the solid warning color lands near
+  // 3.4:1 on its own tint, short of the 4.5:1 floor.
+  --af-status-pending-bg:    #fef3c7;
+  --af-status-pending-ink:   #b45309;
+
   // ---------------------------------------------------------------------------
   // Elevation. Layered shadows (tight contact + soft ambient) read as real
   // depth; a single large blur reads as a grey smudge. Tinted with the slate
