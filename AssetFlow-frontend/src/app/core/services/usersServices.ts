@@ -21,5 +21,6 @@ export class UsersServices{
     reject(id: string): Observable<void>{
         return this.http.put<void>(`${this.base}/${id}/reject`,{});
     }
+
     
 }

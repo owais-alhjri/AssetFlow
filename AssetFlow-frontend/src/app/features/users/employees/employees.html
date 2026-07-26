@@ -1,0 +1,17 @@
+@for (item of employees(); track item.id) {
+    <h2>Email: {{item.email}}</h2>
+    <h2>Full Name: {{item.firstName}} {{ item.lastName}}</h2>
+    <h2>Employee Number: {{item.employeeNumber}}</h2>
+    <h2>Department: {{item.department}}</h2>
+    <h2>Hire Date: {{item.hireDate}}</h2>
+    @if (item.jobTitle !== null && item.jobTitle !== "") {
+    <h2>Job Title: {{item.jobTitle}}</h2>
+    }@else {
+        <h2>Job Title: No job title</h2>
+    }
+    <h2>Is Active: {{item.isActive }}</h2>
+    <h2>Created At: {{item.createdAt | date: 'yyyy-mm-dd'}}</h2>
+    @if (item.updatedAt !== null) {
+    <h2>Updated At: {{item.createdAt | date: 'yyyy-mm-dd'}}</h2>
+    }
+}

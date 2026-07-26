@@ -31,6 +31,12 @@ export const routes: Routes = [
         path: 'assets/:id',
         loadComponent:()=> import('./features/assets/asset-detail/asset-detail').then(m=>m.AssetDetail),
       },
+      {
+        path: 'employees',
+        loadComponent:()=> import('./features/users/employees/employees').then(m=>m.Employees),
+        canActivate: [roleGuard],
+        data: {role: ['Admin']},
+      },
       {path: '', redirectTo: 'assets', pathMatch: 'full'}
     ],
   },
