@@ -1,0 +1,7 @@
+[build]
+  base = "AssetFlow-frontend"
+  command = "npm ci && npm run build"
+  publish = "dist/assetflow-ui/browser"
+
+[build.environment]
+  NODE_VERSION = "22"

@@ -25,19 +25,22 @@ export const routes: Routes = [
       },
       {
         path: 'assets',
-        loadComponent: () => import('./features/assets/assets/assets').then(m=>m.Assets),
+        loadComponent: () => import('./features/assets/assets/assets').then((m) => m.Assets),
       },
       {
         path: 'assets/:id',
-        loadComponent:()=> import('./features/assets/asset-detail/asset-detail').then(m=>m.AssetDetail),
+        loadComponent: () =>
+          import('./features/assets/asset-detail/asset-detail').then((m) => m.AssetDetail),
       },
       {
         path: 'employees',
-        loadComponent:()=> import('./features/users/employees/employees').then(m=>m.Employees),
+        loadComponent: () =>
+          import('./features/users/employees/employees').then((m) => m.Employees),
         canActivate: [roleGuard],
-        data: {role: ['Admin']},
+        data: { roles: ['Admin'] },
       },
-      {path: '', redirectTo: 'assets', pathMatch: 'full'}
+      { path: '', redirectTo: 'assets', pathMatch: 'full' },
+      { path: '**', redirectTo: 'assets' },
     ],
   },
 ];
