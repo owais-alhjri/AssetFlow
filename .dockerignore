@@ -1,0 +1,12 @@
+**/bin
+**/obj
+**/.vs
+**/node_modules
+**/dist
+AssetFlow-frontend
+tests
+.git
+.github
+*.md
+**/appsettings.Development.json
+**/appsettings.Local.json

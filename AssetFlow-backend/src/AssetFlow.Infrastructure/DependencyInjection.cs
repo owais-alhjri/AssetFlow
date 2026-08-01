@@ -11,11 +11,15 @@ namespace AssetFlow.Infrastructure;
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services
-    ,IConfiguration configuration)
+    , IConfiguration configuration)
     {
         services.AddDbContext<AssetFlowDbContext>(options =>
             options.UseNpgsql(
-                configuration.GetConnectionString("DefaultConnection")));
+                configuration.GetConnectionString("DefaultConnection"),
+                npgsql => npgsql.EnableRetryOnFailure(
+                    maxRetryCount: 5,
+                    maxRetryDelay: TimeSpan.FromSeconds(10),
+                    errorCodesToAdd: null)));
         // repositories
         services.AddScoped<IAssetRepository, AssetRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
